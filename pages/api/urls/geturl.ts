@@ -20,11 +20,13 @@ const schema = object().shape({
 });
 
 export default async function geturl(req: NextApiRequest, res: NextApiResponse<any>) {
+	console.log(req.body);
 	switch (req.method) {
 		case "POST":
 			const d = validate(req.body, schema);
 			if (d instanceof APIError) return APIError.badRequest(req, res, d);
 
+			await connect();
 			return URL.findOne({ slug: d.slug })
 				.then((url) => {
 					if (!url) return res.status(404).json(new APIError({ status: 404, name: "NOT_FOUND", message: "This URL does not exist." }));

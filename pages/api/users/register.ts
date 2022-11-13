@@ -5,7 +5,7 @@ import hash from "../../../lib/hash";
 import validate from "../../../lib/requestValidation/validate";
 import { User } from "../../../lib/models/User";
 import { checkDuplicates } from "./validate";
-import sendVerificationMail from "../../../lib/nodemailer";
+import sendVerificationMail from "../../../lib/mail";
 import request from "request-ip";
 import { generateSession } from "../../../lib/sessions";
 import Cookies from "js-cookie";
@@ -48,7 +48,7 @@ export default async function register(req: NextApiRequest, res: NextApiResponse
 			User.create(d)
 				.then(async (user) => {
 					//Create a session
-					const { token, code } = await generateSession(user._id, true, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
+					const { token, code } = await generateSession(user._id, true, false, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
 
 					//Set the cookie
 					Cookies.set("session", token, { expires: 7 });

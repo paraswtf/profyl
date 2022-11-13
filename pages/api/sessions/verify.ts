@@ -28,13 +28,13 @@ export default async function verify(req: NextApiRequest, res: NextApiResponse<a
 					if (!mfa) return APIError.badRequest(req, res, new APIError({ status: 400, message: "Invalid code.", name: "INVALID_CODE" }));
 
 					//Find the session and update it
-					Session.findByIdAndUpdate({ _id: mfa.sessionID }, { verified: true })
+					Session.findByIdAndUpdate({ _id: mfa.sessionID }, { verified: true, emailVerified: true })
 						.then((session) => {
 							//If the session is not found, invalid code
 							if (!session) return APIError.badRequest(req, res, new APIError({ status: 400, message: "Invalid code.", name: "INVALID_CODE" }));
 
 							//Set the user to verifiedEmail in case it isnt already
-							User.findByIdAndUpdate({ _id: session.userId }, { emailVerified: true });
+							if (!session.emailVerified) User.findByIdAndUpdate({ _id: session.userId }, { emailVerified: true });
 
 							//If the session was found, return success
 							res.status(200).json({ success: true });

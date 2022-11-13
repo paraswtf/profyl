@@ -1,27 +1,62 @@
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
+import axios from "axios";
+import { Flex, Heading, Input, Button, FormControl, FormLabel, Switch, useColorMode, useColorModeValue, Center } from "@chakra-ui/react";
+
 import React from "react";
-import { URL } from "../lib/models/URL";
-import connect from "../lib/mongoose";
+import env from "../lib/env";
 
-const Redirect: NextPage = () => {
-	const router = useRouter();
-	const { slug } = router.query;
+export default function Redirect({ slug }: any) {
+	const { toggleColorMode } = useColorMode();
+	const formBackground = useColorModeValue("gray.100", "gray.700");
 
-	if (!slug || !Array.isArray(slug) || slug.length === 0 || slug.length > 2)
-		return (
-			<div>
-				<h1>Invalid URL</h1>
-			</div>
-		);
-	else
-		return (
-			<div>
-				<h1>Redirecting...</h1>
-				<p>Redirecting to {slug.join("/")}...</p>
-			</div>
-		);
-};
+	return (
+		<Flex
+			h="100vh"
+			alignItems="center"
+			justifyContent="center"
+		>
+			<Flex
+				flexDirection="column"
+				bg={formBackground}
+				p={12}
+				borderRadius={8}
+				boxShadow="lg"
+				h="600"
+				w="400"
+			>
+				<Heading mb={6}>Password Protected URL</Heading>
+				<Input
+					placeholder="**********"
+					type="password"
+					variant="filled"
+					mb={6}
+				/>
+				<Button
+					colorScheme="teal"
+					mb={8}
+				>
+					Submit
+				</Button>
+				<FormControl
+					display="flex"
+					alignItems="center"
+				>
+					<FormLabel
+						htmlFor="dark_mode"
+						mb="0"
+					>
+						Enable Dark Mode?
+					</FormLabel>
+					<Switch
+						id="dark_mode"
+						colorScheme="teal"
+						size="lg"
+						onChange={toggleColorMode}
+					/>
+				</FormControl>
+			</Flex>
+		</Flex>
+	);
+}
 
 export const getServerSideProps = async (context: { params: { slug: string[] } }) => {
 	const slug = context.params.slug;
@@ -29,9 +64,17 @@ export const getServerSideProps = async (context: { params: { slug: string[] } }
 	let redirect = null;
 
 	if (slug && Array.isArray(slug) && slug.length !== 0 && slug.length < 2) {
-		await connect();
-		const res = await URL.findOne({ slug: slug.join("/") }).catch(() => null);
-		if (res) redirect = res.url;
+		redirect =
+			(
+				await axios
+					.post(env.BASE_URL + "/api/urls/geturl", {
+						slug: slug.join("/")
+					})
+					.catch((err) => {
+						if (err?.response?.status === 401) return { data: { locked: true } };
+						return null;
+					})
+			)?.data ?? null;
 	}
 
 	if (!redirect) {
@@ -42,20 +85,17 @@ export const getServerSideProps = async (context: { params: { slug: string[] } }
 		};
 	}
 
-	// if (redirectTo.locked) {
-	// 	return {
-	// 		props: {
-	// 			password: redirectTo.password,
-	// 			url: redirectTo.redirectTo
-	// 		}
-	// 	};
-	// }
+	if (redirect.locked) {
+		return {
+			props: {
+				slug: slug.join("/")
+			}
+		};
+	}
 
 	return {
 		redirect: {
-			destination: redirect
+			destination: redirect.url
 		}
 	};
 };
-
-export default Redirect;

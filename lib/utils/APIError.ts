@@ -26,7 +26,6 @@ export default class APIError {
 	}
 
 	public static internalError(err: any, res: NextApiResponse) {
-		console.error(err);
 		return res.status(500).json(new APIError({ status: 500, message: "Internal Server Error", name: "INTERNAL_SERVER_ERROR" }));
 	}
 }

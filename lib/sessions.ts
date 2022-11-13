@@ -7,7 +7,7 @@ import { Session } from "./models/Session";
 import connect from "./mongoose";
 import { generateCode } from "./uniqueID";
 
-export async function generateSession(userID: Types.ObjectId, mfaEnabled?: boolean, ip?: string, userAgent?: string) {
+export async function generateSession(userID: Types.ObjectId, mfaEnabled?: boolean, emailVerified?: boolean, ip?: string, userAgent?: string) {
 	await connect();
 	const token = jwt.sign({ userID }, env.JWT_SECRET, { expiresIn: "7d" });
 

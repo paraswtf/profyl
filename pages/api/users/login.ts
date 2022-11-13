@@ -9,7 +9,7 @@ import { compare } from "../../../lib/hash";
 import { generateSession } from "../../../lib/sessions";
 import request from "request-ip";
 import Cookies from "js-cookie";
-import sendVerificationMail from "../../../lib/nodemailer";
+import sendVerificationMail from "../../../lib/mail";
 
 const schema = object()
 	.shape({
@@ -50,7 +50,7 @@ export default async function login(req: NextApiRequest, res: NextApiResponse<an
 					if (!compare(d.password, user.password)) return res.status(401).json(new APIError({ status: 401, name: "INCORRECT_PASSWORD", message: "Incorrect password." }));
 
 					//Create a session
-					const { token, code } = await generateSession(user._id, user.mfaEnabled, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
+					const { token, code } = await generateSession(user._id, user.mfaEnabled, user.emailVerified, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
 
 					//Set the cookie
 					Cookies.set("session", token, { expires: 7 });

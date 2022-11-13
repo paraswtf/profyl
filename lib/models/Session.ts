@@ -31,6 +31,10 @@ const SessionSchema = new Schema({
 	verified: {
 		type: Boolean,
 		default: false
+	},
+	emailVerified: {
+		type: Boolean,
+		default: false
 	}
 });
 
@@ -52,4 +56,5 @@ export interface SessionData {
 	};
 	createdAt: Date;
 	vefified: boolean;
+	emailVerified: boolean;
 }
