@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Card, Container, Text, Input, Spacer, Button } from "@nextui-org/react";
+import { Card, Container, Input, Spacer, Button } from "@nextui-org/react";
 import env from "../lib/env";
 import { useState } from "react";
 
@@ -31,16 +31,6 @@ export default function Redirect({ slug }: any) {
 				css={{ minHeight: "100vh" }}
 			>
 				<Card css={{ mw: "420px", p: "20px" }}>
-					<Text
-						size={24}
-						weight="bold"
-						css={{
-							as: "center",
-							mb: "20px"
-						}}
-					>
-						Protected URL
-					</Text>
 					<Input
 						labelLeft="https://s.styxo.codes/"
 						value={slug}
