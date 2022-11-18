@@ -1,60 +1,67 @@
 import axios from "axios";
-import { Flex, Heading, Input, Button, FormControl, FormLabel, Switch, useColorMode, useColorModeValue, Center } from "@chakra-ui/react";
-
-import React from "react";
+import { Card, Container, Text, Input, Spacer, Button } from "@nextui-org/react";
 import env from "../lib/env";
+import { useState } from "react";
 
 export default function Redirect({ slug }: any) {
-	const { toggleColorMode } = useColorMode();
-	const formBackground = useColorModeValue("gray.100", "gray.700");
+	let password = "";
+	const [error, setError] = useState(false);
+
+	async function handleClick(event?: any) {
+		event?.preventDefault();
+
+		const res =
+			(
+				await axios.post(env.BASE_URL + "/api/urls/geturl", { slug, password }).catch((err) => {
+					if (err?.response?.status === 401) return { data: { locked: true } };
+					return null;
+				})
+			)?.data ?? null;
+
+		if (!res || res.locked) return setError(true);
+		else window.location.replace(res.url);
+	}
 
 	return (
-		<Flex
-			h="100vh"
-			alignItems="center"
-			justifyContent="center"
-		>
-			<Flex
-				flexDirection="column"
-				bg={formBackground}
-				p={12}
-				borderRadius={8}
-				boxShadow="lg"
-				h="600"
-				w="400"
+		<div>
+			<Container
+				display="flex"
+				alignItems="center"
+				justify="center"
+				css={{ minHeight: "100vh" }}
 			>
-				<Heading mb={6}>Password Protected URL</Heading>
-				<Input
-					placeholder="**********"
-					type="password"
-					variant="filled"
-					mb={6}
-				/>
-				<Button
-					colorScheme="teal"
-					mb={8}
-				>
-					Submit
-				</Button>
-				<FormControl
-					display="flex"
-					alignItems="center"
-				>
-					<FormLabel
-						htmlFor="dark_mode"
-						mb="0"
+				<Card css={{ mw: "420px", p: "20px" }}>
+					<Text
+						size={24}
+						weight="bold"
+						css={{
+							as: "center",
+							mb: "20px"
+						}}
 					>
-						Enable Dark Mode?
-					</FormLabel>
-					<Switch
-						id="dark_mode"
-						colorScheme="teal"
-						size="lg"
-						onChange={toggleColorMode}
+						Protected URL
+					</Text>
+					<Input
+						labelLeft="https://s.styxo.codes/"
+						value={slug}
+						readOnly
 					/>
-				</FormControl>
-			</Flex>
-		</Flex>
+					<Spacer y={1} />
+					<Input.Password
+						placeholder="Password"
+						onChange={(e) => {
+							setError(false);
+							password = e.currentTarget.value;
+						}}
+						helperColor="error"
+						helperText={error ? "Incorrect password" : ""}
+						status={error ? "error" : "default"}
+					/>
+					<Spacer y={1.6} />
+					<Button onClickCapture={handleClick}>Visit Link</Button>
+				</Card>
+			</Container>
+		</div>
 	);
 }
 

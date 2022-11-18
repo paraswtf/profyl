@@ -1,15 +1,10 @@
-import Cookies from "js-cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { boolean, object, string } from "yup";
-import hash, { compare } from "../../../lib/hash";
-import { Session } from "../../../lib/models/Session";
+import { object, string } from "yup";
+import { compare } from "../../../lib/hash";
 import { URL } from "../../../lib/models/URL";
-import { User } from "../../../lib/models/User";
 import connect from "../../../lib/mongoose";
 import validate from "../../../lib/requestValidation/validate";
-import { generateSlug } from "../../../lib/uniqueID";
 import APIError from "../../../lib/utils/APIError";
-import { checkIfExisting } from "./validate";
 
 const schema = object().shape({
 	slug: string().required(),
@@ -20,7 +15,6 @@ const schema = object().shape({
 });
 
 export default async function geturl(req: NextApiRequest, res: NextApiResponse<any>) {
-	console.log(req.body);
 	switch (req.method) {
 		case "POST":
 			const d = validate(req.body, schema);
