@@ -12,7 +12,7 @@ export default function Redirect({ slug }: any) {
 
 		const res =
 			(
-				await axios.post(env.BASE_URL + "/api/urls/geturl", { slug, password }).catch((err) => {
+				await axios.post("/api/urls/geturl", { slug, password }).catch((err) => {
 					if (err?.response?.status === 401) return { data: { locked: true } };
 					return null;
 				})
