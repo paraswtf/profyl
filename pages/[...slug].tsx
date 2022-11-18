@@ -2,6 +2,7 @@ import axios from "axios";
 import { Card, Container, Text, Input, Spacer, Button } from "@nextui-org/react";
 import env from "../lib/env";
 import { useState } from "react";
+import { LockIcon } from "../lib/icons/LockIcon";
 
 export default function Redirect({ slug }: any) {
 	let password = "";
@@ -42,9 +43,16 @@ export default function Redirect({ slug }: any) {
 						Protected URL
 					</Text>
 					<Input
-						labelLeft="https://s.styxo.codes/"
+						labelLeft={env.BASE_URL + "/"}
 						value={slug}
 						readOnly
+						contentRight={
+							//@ts-ignore
+							<LockIcon
+								filled
+								size={20}
+							/>
+						}
 					/>
 					<Spacer y={1} />
 					<Input.Password
@@ -53,6 +61,7 @@ export default function Redirect({ slug }: any) {
 							setError(false);
 							password = e.currentTarget.value;
 						}}
+						onSubmit={handleClick}
 						helperColor="error"
 						helperText={error ? "Incorrect password" : ""}
 						status={error ? "error" : "default"}
