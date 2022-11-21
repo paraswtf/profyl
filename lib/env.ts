@@ -5,6 +5,7 @@ export const env = {
 	JWT_SECRET: process.env.JWT_SECRET as string,
 	//Base URL where the app is hosted (https://example.com)
 	BASE_URL: process.env.NEXT_PUBLIC_BASE_URL as string,
+	DISPLAY_URL: process.env.NEXT_PUBLIC_BASE_URL?.split("//")[1] as string,
 	//Api key for sendgrid (https://sendgrid.com/)
 	MAIL_API_KEY: process.env.MAIL_API_KEY as string
 } as const;

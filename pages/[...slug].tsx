@@ -1,76 +1,84 @@
 import axios from "axios";
-import { Card, Container, Text, Input, Spacer, Button } from "@nextui-org/react";
 import env from "../lib/env";
 import { useState } from "react";
-import { LockIcon } from "../lib/icons/LockIcon";
+import { IconLockAccess } from "@tabler/icons";
+import { Center, Card, Text, Space, PasswordInput, Chip, Button } from "@mantine/core";
+import { useForm } from "@mantine/form";
 
 export default function Redirect({ slug }: any) {
-	let password = "";
-	const [error, setError] = useState(false);
+	const form = useForm({
+		initialValues: {
+			password: ""
+		}
+	});
 
-	async function handleClick(event?: any) {
-		event?.preventDefault();
-
+	const handleSubmit = async (values: typeof form["values"]) => {
 		const res =
 			(
-				await axios.post(env.BASE_URL + "/api/urls/geturl", { slug, password }).catch((err) => {
-					if (err?.response?.status === 401) return { data: { locked: true } };
-					return null;
-				})
+				await axios
+					.post(env.BASE_URL + "/api/urls/geturl", {
+						slug,
+						password: values.password
+					})
+					.catch((err) => {
+						if (err?.response?.status === 401) return { data: { locked: true } };
+						return null;
+					})
 			)?.data ?? null;
 
-		if (!res || res.locked) return setError(true);
+		if (!res || res.locked) return form.setFieldError("password", "Incorrect password");
 		else window.location.replace(res.url);
-	}
+	};
 
 	return (
-		<div>
-			<Container
-				display="flex"
-				alignItems="center"
-				justify="center"
-				css={{ minHeight: "100vh" }}
+		<Center
+			h="100vh"
+			w="100vw"
+		>
+			<Card
+				shadow="md"
+				p="md"
+				radius="md"
+				bg="secondary"
+				w={400}
 			>
-				<Card css={{ mw: "420px", p: "20px" }}>
-					<Text
-						size={24}
-						weight="bold"
-						css={{
-							as: "center",
-							mb: "20px"
-						}}
+				<Text
+					size={24}
+					weight="bold"
+					align="center"
+				>
+					Password Protected URL
+				</Text>
+				<Space h="sm" />
+				<Center>
+					<Chip
+						variant="filled"
+						checked={false}
 					>
-						Protected URL
-					</Text>
-					<Input
-						labelLeft={env.BASE_URL + "/"}
-						value={slug}
-						readOnly
-						contentRight={
-							//@ts-ignore
-							<LockIcon
-								filled
-								size={20}
-							/>
-						}
+						{env.DISPLAY_URL + "/" + slug}
+					</Chip>
+				</Center>
+
+				<Space h="xl" />
+				<form onSubmit={form.onSubmit(handleSubmit)}>
+					<PasswordInput
+						placeholder="Enter Password"
+						id="your-password"
+						{...form.getInputProps("password")}
 					/>
-					<Spacer y={1} />
-					<Input.Password
-						placeholder="Password"
-						onChange={(e) => {
-							setError(false);
-							password = e.currentTarget.value;
-						}}
-						onSubmit={handleClick}
-						helperColor="error"
-						helperText={error ? "Incorrect password" : ""}
-						status={error ? "error" : "default"}
-					/>
-					<Spacer y={1.6} />
-					<Button onClickCapture={handleClick}>Visit Link</Button>
-				</Card>
-			</Container>
-		</div>
+					<Space h="md" />
+					<Center>
+						<Button
+							radius="xl"
+							w="100%"
+							type="submit"
+						>
+							Visit URL
+						</Button>
+					</Center>
+				</form>
+			</Card>
+		</Center>
 	);
 }
 
