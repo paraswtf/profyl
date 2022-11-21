@@ -19,10 +19,7 @@ const schema = object()
 			.matches(/(?!^[\.\_])(?![\.\_]$)(?!.*[\.\_]{2,})^[a-zA-Z0-9\.\_]+$/)
 			.default(undefined),
 		email: string().lowercase().email().default(undefined),
-		password: string()
-			.required()
-			.min(8)
-			.matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])^.+$/)
+		password: string().min(1).required()
 	})
 	.test("usernameOrEmail", "Username or email is required.", (value) => !!(value.username || value.email))
 	.noUnknown();

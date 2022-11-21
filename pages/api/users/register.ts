@@ -17,10 +17,7 @@ const schema = object()
 			.min(3)
 			.max(24)
 			.matches(/(?!^[\.\_])(?![\.\_]$)(?!.*[\.\_]{2,})^[a-zA-Z0-9\.\_]+$/),
-		password: string()
-			.required()
-			.min(8)
-			.matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])^.+$/),
+		password: string().required().min(8),
 		email: string().lowercase().required().email(),
 		emailSubscription: boolean().default(false)
 	})

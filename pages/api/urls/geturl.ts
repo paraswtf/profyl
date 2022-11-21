@@ -8,10 +8,7 @@ import APIError from "../../../lib/utils/APIError";
 
 const schema = object().shape({
 	slug: string().required(),
-	password: string()
-		.min(8)
-		.matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])^.+$/)
-		.default(undefined)
+	password: string().min(1).default(undefined)
 });
 
 export default async function geturl(req: NextApiRequest, res: NextApiResponse<any>) {

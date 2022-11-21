@@ -13,10 +13,7 @@ import { checkIfExisting } from "./validate";
 
 const schema = object().shape({
 	url: string().required().url(),
-	password: string()
-		.min(8)
-		.matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])^.+$/)
-		.default(undefined),
+	password: string().min(1).default(undefined),
 	prependUsername: boolean().default(false),
 	slug: string()
 		.matches(/(?!^[\.\_])(?![\.\_]$)(?!.*[\.\_]{2,})^[a-zA-Z0-9\.\_]+$/)
