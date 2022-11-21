@@ -1,7 +1,6 @@
 import axios from "axios";
 import env from "../lib/env";
-import { useState } from "react";
-import { IconLockAccess } from "@tabler/icons";
+import { IconLock } from "@tabler/icons";
 import { Center, Card, Text, Space, PasswordInput, Chip, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
@@ -27,7 +26,7 @@ export default function Redirect({ slug }: any) {
 			)?.data ?? null;
 
 		if (!res || res.locked) return form.setFieldError("password", "Incorrect password");
-		else window.location.replace(res.url);
+		else window.location.assign(res.url);
 	};
 
 	return (
@@ -55,7 +54,10 @@ export default function Redirect({ slug }: any) {
 						variant="filled"
 						checked={false}
 					>
-						{env.DISPLAY_URL + "/" + slug}
+						<Center>
+							<IconLock size={"15px"} /> <Space w={5} />
+							{env.DISPLAY_URL + "/" + slug}
+						</Center>
 					</Chip>
 				</Center>
 
