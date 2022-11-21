@@ -6,6 +6,7 @@ import { IconLink, IconLock, IconPencilOff, IconCircleCheck } from "@tabler/icon
 import { useState, useEffect } from "react";
 import { useDebouncedValue } from "@mantine/hooks";
 import axios from "axios";
+import { slugRegex } from "../lib/utils/common";
 
 const isValidSlug = async (slug: string) => {
 	const res = (
@@ -35,7 +36,7 @@ const Home: NextPage = () => {
 			slug: ""
 		},
 		validate: {
-			slug: (value) => (/(?!^[\.\_])(?![\.\_]$)(?!.*[\.\_]{2,})^[a-zA-Z0-9\.\_]+$/.test(value) ? null : "Invalid slug")
+			slug: (value) => (slugRegex.test(value) ? null : "Invalid slug")
 		},
 		validateInputOnChange: true
 	});
@@ -43,16 +44,17 @@ const Home: NextPage = () => {
 
 	useEffect(() => {
 		if (!form.values.slug) return;
-		if (form.values.slug !== slug) setSlugLoading(true);
+		if (form.values.slug !== slug && slugRegex.test(form.values.slug)) setSlugLoading(true);
 	}, [form, slug]);
 
 	const sfe = form.setFieldError;
 
 	useEffect(() => {
 		if (!slug) return;
+		if (!slugRegex.test(slug)) return setSlugLoading(false);
 		isValidSlug(slug).then((isValid) => {
-			sfe("slug", isValid ? null : "Slug already exists");
 			setSlugLoading(false);
+			sfe("slug", isValid ? null : "Slug already exists");
 		});
 	}, [slug, sfe]);
 
@@ -103,7 +105,6 @@ const Home: NextPage = () => {
 
 					<TextInput
 						placeholder="Set Custom URL"
-						defaultValue={slug}
 						icon={<IconPencilOff />}
 						rightSection={
 							slugLoading ? (
