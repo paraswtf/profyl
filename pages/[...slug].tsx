@@ -39,7 +39,7 @@ export default function Redirect({ slug }: any) {
 				p="md"
 				radius="md"
 				bg="secondary"
-				w={400}
+				w={350}
 			>
 				<Text
 					size={24}

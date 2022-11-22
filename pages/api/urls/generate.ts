@@ -20,7 +20,12 @@ const schema = object().shape({
 		.default(undefined)
 });
 
-export default async function generate(req: NextApiRequest, res: NextApiResponse<any>) {
+export interface GeneratedUrlData {
+	success: true;
+	slug: string;
+}
+
+export default async function generate(req: NextApiRequest, res: NextApiResponse<GeneratedUrlData | APIError>) {
 	switch (req.method) {
 		case "POST":
 			const d = validate(req.body, schema);
