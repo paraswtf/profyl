@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import env from "../lib/env";
 import { Center, Card, Text, Space, TextInput, Button, CopyButton, Loader, Tooltip } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLink, IconLock, IconPencilOff, IconCircleCheck } from "@tabler/icons";
+import { IconLink, IconLock, IconPencilOff } from "@tabler/icons";
 import { useState, useEffect } from "react";
 import { useDebouncedValue } from "@mantine/hooks";
 import axios from "axios";
@@ -10,6 +10,7 @@ import { slugRegex } from "../lib/utils/common";
 import validUrl from "valid-url";
 import PasswordInput from "../components/PasswordInput";
 import { GeneratedUrlData } from "./api/urls/generate";
+import Link from "next/link";
 
 const isValidSlug = async (slug: string) => {
 	return (
@@ -154,6 +155,19 @@ const Home: NextPage = () => {
 						)}
 					</Center>
 				</form>
+				{url ? (
+					<div>
+						<Space h="md" />
+						<Center>
+							<Text
+								size={12}
+								align="center"
+							>
+								Your URL: <Link href={env.BASE_URL + "/" + url.slug}>{env.BASE_URL + "/" + url.slug}</Link>
+							</Text>
+						</Center>
+					</div>
+				) : null}
 			</Card>
 		</Center>
 	);
