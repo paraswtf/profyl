@@ -132,7 +132,7 @@ const Home: NextPage = () => {
 					<Space h="md" />
 					<Center>
 						{url ? (
-							<CopyButton value={env.BASE_URL + "/" + url.slug}>
+							<CopyButton value={"prf.ink/" + url.slug}>
 								{({ copied, copy }) => (
 									<Button
 										radius="xl"
@@ -163,7 +163,7 @@ const Home: NextPage = () => {
 								size={12}
 								align="center"
 							>
-								Your URL: <Link href={env.BASE_URL + "/" + url.slug}>{env.BASE_URL + "/" + url.slug}</Link>
+								Your URL: <Link href={"https://prf.ink/" + url.slug}>{"prf.ink/" + url.slug}</Link>
 							</Text>
 						</Center>
 					</div>
