@@ -5,8 +5,10 @@ import { Center, Card, Text, Space, PasswordInput, Chip, Button } from "@mantine
 import { useForm } from "@mantine/form";
 import Image from "next/image";
 import Head from "next/head";
+import { useState } from "react";
 
 export default function Redirect({ slug }: any) {
+	const [submitting, setSubmitting] = useState(false);
 	const form = useForm({
 		initialValues: {
 			password: ""
@@ -14,6 +16,9 @@ export default function Redirect({ slug }: any) {
 	});
 
 	const handleSubmit = async (values: typeof form["values"]) => {
+		//Set submitting to true to show the loader
+		setSubmitting(true);
+
 		const res =
 			(
 				await axios
@@ -25,6 +30,7 @@ export default function Redirect({ slug }: any) {
 						if (err?.response?.status === 401) return { data: { locked: true } };
 						return null;
 					})
+					.finally(() => setSubmitting(false))
 			)?.data ?? null;
 
 		if (!res || res.locked) return form.setFieldError("password", "Incorrect password");
@@ -91,6 +97,12 @@ export default function Redirect({ slug }: any) {
 								radius="xl"
 								w="100%"
 								type="submit"
+								loading={submitting}
+								loaderProps={{
+									size: "xs",
+									variant: "dots"
+								}}
+								loaderPosition="right"
 							>
 								Visit URL
 							</Button>

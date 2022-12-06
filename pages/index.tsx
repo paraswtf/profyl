@@ -193,6 +193,7 @@ const Home: NextPage = () => {
 										size: "xs",
 										variant: "dots"
 									}}
+									loaderPosition="right"
 								>
 									Generate URL
 								</Button>
