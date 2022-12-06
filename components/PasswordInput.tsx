@@ -21,7 +21,6 @@ function getStrength(password: string) {
 
 export default function PasswordInput(props: PWIProps & { value: string }) {
 	const strength = getStrength(props.value);
-	console.log(strength);
 	const color = strength === 100 ? "teal" : "yellow";
 
 	return (

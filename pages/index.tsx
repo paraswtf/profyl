@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import env from "../lib/env";
-import { Center, Card, Text, Space, TextInput, Button, Loader, Tooltip, CopyButtonProps, ButtonProps } from "@mantine/core";
+import { Center, Card, Text, Space, TextInput, Button, Loader, ButtonProps, Chip } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLink, IconLock, IconPencilOff } from "@tabler/icons";
+import { IconLink, IconLock, IconPencil } from "@tabler/icons";
 import { useState, useEffect } from "react";
 import { useDebouncedValue } from "@mantine/hooks";
 import axios from "axios";
@@ -105,7 +105,7 @@ const Home: NextPage = () => {
 				p="md"
 				radius="md"
 				bg="secondary"
-				w={350}
+				w="min(350px, calc(100vw - 30px))"
 				sx={{ overflow: "visible" }}
 			>
 				<Text
@@ -135,22 +135,20 @@ const Home: NextPage = () => {
 						{...(url != null ? { visible: false } : {})}
 					/>
 					<Space h="md" />
-					<Tooltip label="I'll work on this part later, but it works :)">
-						<TextInput
-							placeholder="Set Custom URL (working on this)"
-							icon={<IconPencilOff />}
-							rightSection={
-								slugLoading ? (
-									<Loader
-										size="xs"
-										variant="dots"
-									/>
-								) : null
-							}
-							{...form.getInputProps("slug")}
-							disabled={/*url !== null*/ true}
-						/>
-					</Tooltip>
+					<TextInput
+						placeholder="Set Custom URL (BETA)"
+						icon={<IconPencil />}
+						rightSection={
+							slugLoading ? (
+								<Loader
+									size="xs"
+									variant="dots"
+								/>
+							) : null
+						}
+						{...form.getInputProps("slug")}
+						disabled={url !== null /*true*/}
+					/>
 					<Space h="md" />
 					<Center>
 						{url ? (
@@ -178,8 +176,19 @@ const Home: NextPage = () => {
 							<Clipboard
 								data-clipboard-text={"prf.ink/" + url.slug}
 								button-title="Click to copy"
+								style={{ cursor: "pointer", overflow: "hidden", background: "none", border: "none", padding: 0, margin: 0 }}
 							>
-								{"prf.ink/" + url.slug}
+								<Center>
+									<Chip
+										variant="filled"
+										checked={false}
+									>
+										<Center>
+											<IconLink size={"15px"} /> <Space w={5} />
+											{"prf.ink/" + url.slug}
+										</Center>
+									</Chip>
+								</Center>
 							</Clipboard>
 						</Center>
 					</div>
