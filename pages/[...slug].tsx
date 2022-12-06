@@ -3,6 +3,8 @@ import env from "../lib/env";
 import { IconLock } from "@tabler/icons";
 import { Center, Card, Text, Space, PasswordInput, Chip, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import Image from "next/image";
+import Head from "next/head";
 
 export default function Redirect({ slug }: any) {
 	const form = useForm({
@@ -30,57 +32,73 @@ export default function Redirect({ slug }: any) {
 	};
 
 	return (
-		<Center
-			h="100vh"
-			w="100vw"
-		>
-			<Card
-				shadow="md"
-				p="md"
-				radius="md"
-				bg="secondary"
-				w={350}
+		<div>
+			<Head>
+				<title>Profyl - Password Protected URL</title>
+			</Head>
+			<Center
+				h="100vh"
+				w="100vw"
+				style={{
+					flexDirection: "column"
+				}}
 			>
-				<Text
-					size={24}
-					weight="bold"
-					align="center"
-				>
-					Password Protected URL
-				</Text>
-				<Space h="sm" />
-				<Center>
-					<Chip
-						variant="filled"
-						checked={false}
-					>
-						<Center>
-							<IconLock size={"15px"} /> <Space w={5} />
-							{env.DISPLAY_URL + "/" + slug}
-						</Center>
-					</Chip>
-				</Center>
+				<Image
+					src="/logo.svg"
+					alt="Logo"
+					width={100}
+					height={100}
+				/>
 
 				<Space h="xl" />
-				<form onSubmit={form.onSubmit(handleSubmit)}>
-					<PasswordInput
-						placeholder="Enter Password"
-						id="your-password"
-						{...form.getInputProps("password")}
-					/>
-					<Space h="md" />
+				<Card
+					shadow="md"
+					p="md"
+					radius="md"
+					bg="secondary"
+					w={350}
+				>
+					<Text
+						size={24}
+						weight="bold"
+						align="center"
+					>
+						Password Protected URL
+					</Text>
+					<Space h="sm" />
 					<Center>
-						<Button
-							radius="xl"
-							w="100%"
-							type="submit"
+						<Chip
+							variant="filled"
+							checked={false}
 						>
-							Visit URL
-						</Button>
+							<Center>
+								<IconLock size={"15px"} /> <Space w={5} />
+								{env.DISPLAY_URL + "/" + slug}
+							</Center>
+						</Chip>
 					</Center>
-				</form>
-			</Card>
-		</Center>
+
+					<Space h="xl" />
+					<form onSubmit={form.onSubmit(handleSubmit)}>
+						<PasswordInput
+							placeholder="Enter Password"
+							id="your-password"
+							{...form.getInputProps("password")}
+						/>
+						<Space h="md" />
+						<Center>
+							<Button
+								radius="xl"
+								w="100%"
+								type="submit"
+							>
+								Visit URL
+							</Button>
+						</Center>
+					</form>
+				</Card>
+			</Center>
+		</div>
 	);
 }
 

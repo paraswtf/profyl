@@ -11,6 +11,8 @@ import validUrl from "valid-url";
 import PasswordInput from "../components/PasswordInput";
 import { GeneratedUrlData } from "./api/urls/generate";
 import Clipboard from "react-clipboard.js";
+import Image from "next/image";
+import Head from "next/head";
 
 const isValidSlug = async (slug: string) => {
 	return (
@@ -96,105 +98,120 @@ const Home: NextPage = () => {
 	};
 
 	return (
-		<Center
-			h="100vh"
-			w="100vw"
-		>
-			<Card
-				shadow="md"
-				p="md"
-				radius="md"
-				bg="secondary"
-				w="min(350px, calc(100vw - 30px))"
-				sx={{ overflow: "visible" }}
+		<div>
+			<Head>
+				<title>Profyl - Generate URL</title>
+			</Head>
+			<Center
+				h="100vh"
+				w="100vw"
+				style={{
+					flexDirection: "column"
+				}}
 			>
-				<Text
-					size={24}
-					weight="bold"
-					align="center"
+				<Image
+					src="/logo.svg"
+					alt="Logo"
+					width={100}
+					height={100}
+				/>
+				<Space h="xl" />
+				<Card
+					shadow="md"
+					p="md"
+					radius="md"
+					bg="secondary"
+					w="min(350px, calc(100vw - 30px))"
+					sx={{ overflow: "visible" }}
 				>
-					Shorten URL
-				</Text>
-				<Space h="sm" />
+					<Text
+						size={24}
+						weight="bold"
+						align="center"
+					>
+						Shorten URL
+					</Text>
+					<Space h="sm" />
 
-				<form onSubmit={form.onSubmit(handleSubmit)}>
-					<TextInput
-						placeholder="Enter a URL to shorten"
-						icon={<IconLink />}
-						withAsterisk={true}
-						{...form.getInputProps("url")}
-						disabled={url !== null}
-					/>
-					<Space h="md" />
-					<PasswordInput
-						placeholder="Set Password (optional)"
-						id="your-password"
-						icon={<IconLock />}
-						{...form.getInputProps("password")}
-						disabled={url !== null}
-						{...(url != null ? { visible: false } : {})}
-					/>
-					<Space h="md" />
-					<TextInput
-						placeholder="Set Custom URL (BETA)"
-						icon={<IconPencil />}
-						rightSection={
-							slugLoading ? (
-								<Loader
-									size="xs"
-									variant="dots"
-								/>
-							) : null
-						}
-						{...form.getInputProps("slug")}
-						disabled={url !== null /*true*/}
-					/>
-					<Space h="md" />
-					<Center>
-						{url ? (
-							<CopyButton
-								value={"prf.ink/" + url.slug}
-								radius="xl"
-								w="100%"
-							/>
-						) : (
-							<Button
-								radius="xl"
-								w="100%"
-								type="submit"
-							>
-								Generate URL
-							</Button>
-						)}
-					</Center>
-				</form>
-				{url ? (
-					<div>
+					<form onSubmit={form.onSubmit(handleSubmit)}>
+						<TextInput
+							placeholder="Enter a URL to shorten"
+							icon={<IconLink />}
+							withAsterisk={true}
+							{...form.getInputProps("url")}
+							disabled={url !== null}
+						/>
 						<Space h="md" />
-
+						<PasswordInput
+							placeholder="Set Password (optional)"
+							id="your-password"
+							icon={<IconLock />}
+							{...form.getInputProps("password")}
+							disabled={url !== null}
+							{...(url != null ? { visible: false } : {})}
+						/>
+						<Space h="md" />
+						<TextInput
+							placeholder="Set Custom URL (BETA)"
+							icon={<IconPencil />}
+							rightSection={
+								slugLoading ? (
+									<Loader
+										size="xs"
+										variant="dots"
+									/>
+								) : null
+							}
+							{...form.getInputProps("slug")}
+							disabled={url !== null /*true*/}
+						/>
+						<Space h="md" />
 						<Center>
-							<Clipboard
-								data-clipboard-text={"prf.ink/" + url.slug}
-								button-title="Click to copy"
-								style={{ cursor: "pointer", overflow: "hidden", background: "none", border: "none", padding: 0, margin: 0 }}
-							>
-								<Center>
-									<Chip
-										variant="filled"
-										checked={false}
-									>
-										<Center>
-											<IconLink size={"15px"} /> <Space w={5} />
-											{"prf.ink/" + url.slug}
-										</Center>
-									</Chip>
-								</Center>
-							</Clipboard>
+							{url ? (
+								<CopyButton
+									value={"prf.ink/" + url.slug}
+									radius="xl"
+									w="100%"
+								/>
+							) : (
+								<Button
+									radius="xl"
+									w="100%"
+									type="submit"
+								>
+									Generate URL
+								</Button>
+							)}
 						</Center>
-					</div>
-				) : null}
-			</Card>
-		</Center>
+					</form>
+					{url ? (
+						<div>
+							<Space h="md" />
+
+							<Center>
+								<Clipboard
+									data-clipboard-text={"prf.ink/" + url.slug}
+									button-title="Click to copy"
+									style={{ cursor: "pointer", overflow: "hidden", background: "none", border: "none", padding: 0, margin: 0 }}
+								>
+									<Center>
+										<Chip
+											variant="filled"
+											checked={false}
+										>
+											<Center>
+												<IconLink size={"15px"} /> <Space w={5} />
+												{"prf.ink/" + url.slug}
+											</Center>
+										</Chip>
+									</Center>
+								</Clipboard>
+							</Center>
+						</div>
+					) : null}
+				</Card>
+			</Center>
+		</div>
 	);
 };
 
