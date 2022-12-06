@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import env from "../lib/env";
-import { Center, Card, Text, Space, TextInput, Button, CopyButton, Loader, Tooltip } from "@mantine/core";
+import { Center, Card, Text, Space, TextInput, Button, Loader, Tooltip, CopyButtonProps, ButtonProps } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLink, IconLock, IconPencilOff } from "@tabler/icons";
 import { useState, useEffect } from "react";
@@ -10,7 +10,7 @@ import { slugRegex } from "../lib/utils/common";
 import validUrl from "valid-url";
 import PasswordInput from "../components/PasswordInput";
 import { GeneratedUrlData } from "./api/urls/generate";
-import Link from "next/link";
+import Clipboard from "react-clipboard.js";
 
 const isValidSlug = async (slug: string) => {
 	return (
@@ -25,6 +25,28 @@ const isValidSlug = async (slug: string) => {
 	)?.data
 		? false
 		: true;
+};
+
+const CopyButton = (props: ButtonProps & { value: string }) => {
+	const [copied, setCopied] = useState(false);
+	return (
+		<Clipboard
+			data-clipboard-text={props.value}
+			onSuccess={() => {
+				setCopied(true);
+				setTimeout(() => setCopied(false), 1000);
+			}}
+			isVisibleWhenUnsupported
+			style={{ padding: 0, margin: 0, width: "100%", background: "none", border: "none" }}
+		>
+			<Button
+				{...props}
+				color={copied ? "teal" : "green"}
+			>
+				{copied ? "Copied!" : "Copy generated URL"}
+			</Button>
+		</Clipboard>
+	);
 };
 
 const Home: NextPage = () => {
@@ -132,18 +154,11 @@ const Home: NextPage = () => {
 					<Space h="md" />
 					<Center>
 						{url ? (
-							<CopyButton value={"prf.ink/" + url.slug}>
-								{({ copied, copy }) => (
-									<Button
-										radius="xl"
-										w="100%"
-										color={copied ? "teal" : "green"}
-										onClick={copy}
-									>
-										{copied ? "Copied url" : "Copy url"}
-									</Button>
-								)}
-							</CopyButton>
+							<CopyButton
+								value={"prf.ink/" + url.slug}
+								radius="xl"
+								w="100%"
+							/>
 						) : (
 							<Button
 								radius="xl"
@@ -158,13 +173,14 @@ const Home: NextPage = () => {
 				{url ? (
 					<div>
 						<Space h="md" />
+
 						<Center>
-							<Text
-								size={12}
-								align="center"
+							<Clipboard
+								data-clipboard-text={"prf.ink/" + url.slug}
+								button-title="Click to copy"
 							>
-								Your URL: <Link href={"https://prf.ink/" + url.slug}>{"prf.ink/" + url.slug}</Link>
-							</Text>
+								{"prf.ink/" + url.slug}
+							</Clipboard>
 						</Center>
 					</div>
 				) : null}
