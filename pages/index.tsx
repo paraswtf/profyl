@@ -129,7 +129,7 @@ const Home: NextPage = () => {
 				<Card
 					shadow="md"
 					p="md"
-					radius="md"
+					radius="lg"
 					bg="secondary"
 					w="min(350px, calc(100vw - 30px))"
 					sx={{ overflow: "visible" }}

@@ -60,7 +60,7 @@ export default function Redirect({ slug }: any) {
 				<Card
 					shadow="md"
 					p="md"
-					radius="md"
+					radius="lg"
 					bg="secondary"
 					w={350}
 				>
