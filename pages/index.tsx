@@ -54,6 +54,7 @@ const CopyButton = (props: ButtonProps & { value: string }) => {
 const Home: NextPage = () => {
 	const [url, setUrl] = useState<GeneratedUrlData | null>(null);
 	const [slugLoading, setSlugLoading] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const form = useForm({
 		initialValues: {
 			url: "",
@@ -90,9 +91,18 @@ const Home: NextPage = () => {
 	}, [slug, sfe]);
 
 	const handleSubmit = async (values: typeof form["values"]) => {
+		//Set loading state
+		setSubmitting(true);
 		//remove all falsy values
 		const req = Object.fromEntries(Object.entries(values).filter(([, v]) => v)) as typeof values;
-		const res = (await axios.post<{ slug: string }, { data: GeneratedUrlData }>(env.BASE_URL + "/api/urls/generate", req).catch(console.error))?.data;
+		const res = (
+			await axios
+				.post<{ slug: string }, { data: GeneratedUrlData }>(env.BASE_URL + "/api/urls/generate", req)
+				.catch(console.error)
+				.finally(() => {
+					setSubmitting(false);
+				})
+		)?.data;
 
 		if (res) setUrl(res);
 	};
@@ -178,6 +188,11 @@ const Home: NextPage = () => {
 									radius="xl"
 									w="100%"
 									type="submit"
+									loading={submitting}
+									loaderProps={{
+										size: "xs",
+										variant: "dots"
+									}}
 								>
 									Generate URL
 								</Button>

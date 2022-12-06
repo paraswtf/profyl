@@ -41,7 +41,8 @@ export default async function generate(req: NextApiRequest, res: NextApiResponse
 				.then((session) => (session ? User.findById(session.userId).catch(() => null) : null))
 				.catch(() => null);
 
-			if (!user && (d.prependUsername || d.slug)) return res.status(401).json(new APIError({ status: 401, name: "UNAUTHORIZED", message: "You must be logged in to use this feature." }));
+			//Removed login check for beta
+			//if (!user && (d.prependUsername || d.slug)) return res.status(401).json(new APIError({ status: 401, name: "UNAUTHORIZED", message: "You must be logged in to use this feature." }));
 
 			const slug = d.slug ?? generateSlug();
 			const finalSlug = user && d.prependUsername ? `${user.username}/${slug}` : slug;
