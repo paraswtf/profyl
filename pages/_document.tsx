@@ -49,8 +49,8 @@ export default class _Document extends Document {
 						content="#1a1b1e"
 					/>
 					<meta
-						title="description"
-						content="URL Shortener"
+						name="description"
+						content="A simple and easy to use URL shortener"
 					/>
 				</Head>
 				<body>
