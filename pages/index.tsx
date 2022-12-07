@@ -11,8 +11,8 @@ import validUrl from "valid-url";
 import PasswordInput from "../components/PasswordInput";
 import { GeneratedUrlData } from "./api/urls/generate";
 import Clipboard from "react-clipboard.js";
-import Image from "next/image";
 import Head from "next/head";
+import Logo from "../components/Logo";
 
 const isValidSlug = async (slug: string) => {
 	return (
@@ -119,12 +119,7 @@ const Home: NextPage = () => {
 					flexDirection: "column"
 				}}
 			>
-				<Image
-					src="/logo.svg"
-					alt="Logo"
-					width={100}
-					height={100}
-				/>
+				<Logo />
 				<Space h="xl" />
 				<Card
 					shadow="md"

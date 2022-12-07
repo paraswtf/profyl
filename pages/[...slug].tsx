@@ -3,9 +3,9 @@ import env from "../lib/env";
 import { IconLock } from "@tabler/icons";
 import { Center, Card, Text, Space, PasswordInput, Chip, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import Image from "next/image";
 import Head from "next/head";
 import { useState } from "react";
+import Logo from "../components/Logo";
 
 export default function Redirect({ slug }: any) {
 	const [submitting, setSubmitting] = useState(false);
@@ -49,13 +49,7 @@ export default function Redirect({ slug }: any) {
 					flexDirection: "column"
 				}}
 			>
-				<Image
-					src="/logo.svg"
-					alt="Logo"
-					width={100}
-					height={100}
-				/>
-
+				<Logo />
 				<Space h="xl" />
 				<Card
 					shadow="md"

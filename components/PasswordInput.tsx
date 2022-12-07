@@ -30,6 +30,7 @@ export default function PasswordInput(props: PWIProps & { value: string }) {
 				color={color}
 				value={strength}
 				size={2}
+				aria-label="Password strength"
 			/>
 		</div>
 	);
