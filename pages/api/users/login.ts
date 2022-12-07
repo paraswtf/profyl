@@ -10,14 +10,11 @@ import { generateSession } from "../../../lib/sessions";
 import request from "request-ip";
 import Cookies from "js-cookie";
 import sendVerificationMail from "../../../lib/mail";
+import { usernameRegex } from "../../../lib/utils/common";
 
 const schema = object()
 	.shape({
-		username: string()
-			.min(3)
-			.max(24)
-			.matches(/(?!^[\.\_])(?![\.\_]$)(?!.*[\.\_]{2,})^[a-zA-Z0-9\.\_]+$/)
-			.default(undefined),
+		username: string().min(3).max(24).matches(usernameRegex).default(undefined),
 		email: string().lowercase().email().default(undefined),
 		password: string().min(1).required()
 	})
@@ -43,7 +40,7 @@ export default async function login(req: NextApiRequest, res: NextApiResponse<an
 			//Find the code document and delete it
 			User.findOne({ [isUsername ? "username" : "email"]: d[isUsername ? "username" : "email"] })
 				.then(async (user) => {
-					if (!user) return APIError.badRequest(req, res, new APIError({ status: 400, name: "USER_NOT_FOUND", message: "User not found." }));
+					if (!user) return APIError.unauthorized(req, res, new APIError({ status: 401, name: "USER_NOT_FOUND", message: "User not found." }));
 					if (!compare(d.password, user.password)) return res.status(401).json(new APIError({ status: 401, name: "INCORRECT_PASSWORD", message: "Incorrect password." }));
 
 					//Create a session
@@ -53,10 +50,10 @@ export default async function login(req: NextApiRequest, res: NextApiResponse<an
 					Cookies.set("session", token, { expires: 7 });
 
 					//Send the verification email if MFA is enabled
-					typeof code === "string" ? sendVerificationMail(d.email, code) : null;
+					typeof code === "string" ? sendVerificationMail(user.email, code) : null;
 
 					//Send the success response
-					res.status(200).json({ success: true });
+					res.status(200).json({ success: true, emailSent: typeof code === "string", email: user.email, mfaEnabled: user.mfaEnabled });
 				})
 				.catch(() => APIError.internalError(req, res));
 			break;
@@ -64,3 +61,14 @@ export default async function login(req: NextApiRequest, res: NextApiResponse<an
 			APIError.notAllowed(req, res);
 	}
 }
+
+export type LoginRequest = {
+	password: string;
+} & ({ username: string; email: undefined } | { email: string; username: undefined });
+
+export type LoginResponse = {
+	success: boolean;
+	emailSent: boolean;
+	email: string;
+	mfaEnabled: boolean;
+};

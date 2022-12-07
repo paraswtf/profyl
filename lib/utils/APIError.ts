@@ -25,6 +25,10 @@ export default class APIError {
 		return res.status(400).json(message);
 	}
 
+	public static unauthorized(req: NextApiRequest, res: NextApiResponse, message: APIError) {
+		return res.status(401).json(message);
+	}
+
 	public static internalError(err: any, res: NextApiResponse) {
 		return res.status(500).json(new APIError({ status: 500, message: "Internal Server Error", name: "INTERNAL_SERVER_ERROR" }));
 	}
@@ -36,8 +40,8 @@ const APIErrors = {
 	INVALID_USERNAME: 4001,
 	INVALID_EMAIL: 4002,
 	INVALID_PASSWORD: 4003,
-	USER_NOT_FOUND: 4004,
 	UNAUTHORIZED: 401,
+	USER_NOT_FOUND: 4010,
 	INCORRECT_PASSWORD: 4010,
 	NOT_FOUND: 404,
 	METHOD_NOT_ALLOWED: 405,
