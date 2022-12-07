@@ -8,9 +8,10 @@ import { User } from "../../../lib/models/User";
 import { compare } from "../../../lib/hash";
 import { generateSession } from "../../../lib/sessions";
 import request from "request-ip";
-import Cookies from "js-cookie";
+import { serialize } from "cookie";
 import sendVerificationMail from "../../../lib/mail";
 import { usernameRegex } from "../../../lib/utils/common";
+import { getCookie, setCookie } from "../../../lib/cookies";
 
 const schema = object()
 	.shape({
@@ -31,9 +32,9 @@ export default async function login(req: NextApiRequest, res: NextApiResponse<an
 			await connect();
 
 			//Remove the existing session if any
-			const session = Cookies.get("session");
+			const session = getCookie(req, "session");
 			if (session) {
-				Cookies.remove("session");
+				setCookie(res, "session", "");
 				await Session.deleteOne({ token: session }).catch(() => null);
 			}
 
@@ -47,7 +48,7 @@ export default async function login(req: NextApiRequest, res: NextApiResponse<an
 					const { token, code } = await generateSession(user._id, user.mfaEnabled, user.emailVerified, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
 
 					//Set the cookie
-					Cookies.set("session", token, { expires: 7 });
+					setCookie(res, "session", token);
 
 					//Send the verification email if MFA is enabled
 					typeof code === "string" ? sendVerificationMail(user.email, code) : null;

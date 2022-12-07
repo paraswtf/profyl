@@ -1,6 +1,6 @@
-import Cookies from "js-cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { boolean, object, string } from "yup";
+import { getCookie } from "../../../lib/cookies";
 import hash from "../../../lib/hash";
 import { Session } from "../../../lib/models/Session";
 import { URL } from "../../../lib/models/URL";
@@ -34,7 +34,7 @@ export default async function generate(req: NextApiRequest, res: NextApiResponse
 			//Hash the password if it exists
 			if (d.password) d.password = hash(d.password);
 
-			const token = Cookies.get("session");
+			const token = getCookie(req, "session");
 			//Connect to db
 			await connect();
 			const user = await Session.findOne({ token })

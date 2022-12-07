@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { boolean, object, string } from "yup";
 import { Session } from "../../../lib/models/Session";
@@ -8,6 +7,7 @@ import { generateSlug } from "../../../lib/uniqueID";
 import APIError from "../../../lib/utils/APIError";
 import { URL } from "../../../lib/models/URL";
 import connect from "../../../lib/mongoose";
+import { getCookie } from "../../../lib/cookies";
 
 const schema = object().shape({
 	prependUsername: boolean().default(false),
@@ -22,7 +22,7 @@ export default async function validateURL(req: NextApiRequest, res: NextApiRespo
 			const d = validate(req.body, schema);
 			if (d instanceof APIError) return APIError.badRequest(req, res, d);
 
-			const token = Cookies.get("session");
+			const token = getCookie(req, "session");
 
 			//Connect to db
 			await connect();

@@ -8,15 +8,12 @@ import { checkDuplicates } from "./validate";
 import sendVerificationMail from "../../../lib/mail";
 import request from "request-ip";
 import { generateSession } from "../../../lib/sessions";
-import Cookies from "js-cookie";
+import { usernameRegex } from "../../../lib/utils/common";
+import { setCookie } from "../../../lib/cookies";
 
 const schema = object()
 	.shape({
-		username: string()
-			.required()
-			.min(3)
-			.max(24)
-			.matches(/(?!^[\.\_])(?![\.\_]$)(?!.*[\.\_]{2,})^[a-zA-Z0-9\.\_]+$/),
+		username: string().required().min(3).max(24).matches(usernameRegex),
 		password: string().required().min(8),
 		email: string().lowercase().required().email(),
 		emailSubscription: boolean().default(false)
@@ -48,7 +45,7 @@ export default async function register(req: NextApiRequest, res: NextApiResponse
 					const { token, code } = await generateSession(user._id, true, false, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
 
 					//Set the cookie
-					Cookies.set("session", token, { expires: 7 });
+					setCookie(res, "session", token);
 
 					//Send the verification email
 					typeof code === "string" ? sendVerificationMail(d.email, code) : null;
