@@ -55,6 +55,6 @@ export interface SessionData {
 		longitude: string;
 	};
 	createdAt: Date;
-	vefified: boolean;
+	verified: boolean;
 	emailVerified: boolean;
 }
