@@ -6,8 +6,9 @@ import { useForm } from "@mantine/form";
 import Head from "next/head";
 import { useState } from "react";
 import Logo from "../components/Logo";
+import request from "../lib/api";
 
-export default function Redirect({ slug }: any) {
+export default function Redirect({ slug }: { slug: string }) {
 	const [submitting, setSubmitting] = useState(false);
 	const form = useForm({
 		initialValues: {
@@ -109,43 +110,19 @@ export default function Redirect({ slug }: any) {
 }
 
 export const getServerSideProps = async (context: { params: { slug: string[] } }) => {
-	const slug = context.params.slug;
+	console.log(context.params);
+	try {
+		const slug = context.params.slug.join("/");
 
-	let redirect = null;
+		const res = await request("/urls/geturl", { slug });
+		console.log(res);
 
-	if (slug && Array.isArray(slug) && slug.length !== 0 && slug.length < 2) {
-		redirect =
-			(
-				await axios
-					.post(env.BASE_URL + "/api/urls/geturl", {
-						slug: slug.join("/")
-					})
-					.catch((err) => {
-						if (err?.response?.status === 401) return { data: { locked: true } };
-						return null;
-					})
-			)?.data ?? null;
-	}
+		if (res.status === 404) return { redirect: { destination: "/404" } };
 
-	if (!redirect) {
-		return {
-			redirect: {
-				destination: "/404"
-			}
-		};
-	}
+		if (res.success) return { redirect: { destination: res.url } };
 
-	if (redirect.locked) {
-		return {
-			props: {
-				slug: slug.join("/")
-			}
-		};
-	}
+		if (res.status === 400) return { props: { slug } };
+	} catch (err) {}
 
-	return {
-		redirect: {
-			destination: redirect.url
-		}
-	};
+	return { redirect: { destination: "/500" } };
 };

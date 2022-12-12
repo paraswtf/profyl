@@ -1,18 +1,19 @@
 import type { NextPage } from "next";
-import env from "../lib/env";
 import { Center, Card, Text, Space, TextInput, Button, PasswordInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLock, IconUser } from "@tabler/icons";
 import { useState } from "react";
 import axios from "axios";
-import { GeneratedUrlData } from "./api/urls/generate";
 import Image from "next/image";
 import Head from "next/head";
 import { LoginRequest } from "./api/users/login";
+import request from "../lib/api";
+import { verificationInput } from "./verify";
 
 const Login: NextPage = () => {
-	const [url, setUrl] = useState<GeneratedUrlData | null>(null);
 	const [submitting, setSubmitting] = useState(false);
+	const [submitted, setSubmitted] = useState(false);
+	const [mfaEmail, setMfaEmail] = useState<string | null>(null);
 	const form = useForm({
 		initialValues: {
 			username: "",
@@ -36,17 +37,24 @@ const Login: NextPage = () => {
 			password: values.password,
 			[values.username.includes("@") ? "email" : "username"]: values.username
 		} as any as LoginRequest;
-		const res = (
-			await axios
-				.post<{ username: string; password: string }, { data: GeneratedUrlData }>(env.BASE_URL + "/api/users/login", req)
-				.catch(console.error)
-				.finally(() => {
-					setSubmitting(false);
-				})
-		)?.data;
-		console.log(res);
+		try {
+			const res = await request("/users/login", req);
+			if (res.status === 200) {
+				setSubmitted(true);
+				window.location.assign("/");
+			}
+			if (res.status === 400) {
+				form.setFieldError("username", res.fields.username);
+				form.setFieldError("password", res.fields.password);
+			}
+			if (res.status === 401) {
+				setMfaEmail(res.email);
+			}
+		} catch (e) {
+			console.error(e);
+		}
 
-		if (res) setUrl(res);
+		setSubmitting(false);
 	};
 
 	return (
@@ -76,49 +84,63 @@ const Login: NextPage = () => {
 					w="min(350px, calc(100vw - 30px))"
 					sx={{ overflow: "visible" }}
 				>
-					<Text
-						size={24}
-						weight="bold"
-						align="center"
-					>
-						Login
-					</Text>
-					<Space h="sm" />
+					{mfaEmail
+						? verificationInput(mfaEmail)
+						: [
+								<Text
+									size={24}
+									weight="bold"
+									align="center"
+									key="a"
+								>
+									Login
+								</Text>,
+								<Space
+									h="sm"
+									key="b"
+								/>,
 
-					<form onSubmit={form.onSubmit(handleSubmit)}>
-						<TextInput
-							placeholder="Enter your username or email"
-							icon={<IconUser />}
-							withAsterisk={true}
-							{...form.getInputProps("username")}
-							disabled={url !== null}
-						/>
-						<Space h="md" />
-						<PasswordInput
-							placeholder="Enter your password"
-							id="your-password"
-							icon={<IconLock />}
-							{...form.getInputProps("password")}
-							disabled={url !== null}
-							{...(url != null ? { visible: false } : {})}
-						/>
-						<Space h="md" />
-						<Center>
-							<Button
-								radius="xl"
-								w="100%"
-								type="submit"
-								loading={submitting}
-								loaderProps={{
-									size: "xs",
-									variant: "dots"
-								}}
-								loaderPosition="right"
-							>
-								Login
-							</Button>
-						</Center>
-					</form>
+								<form
+									onSubmit={form.onSubmit(handleSubmit)}
+									key="c"
+								>
+									<TextInput
+										placeholder="Enter your username or email"
+										autoComplete="username"
+										icon={<IconUser />}
+										withAsterisk={true}
+										{...form.getInputProps("username")}
+										disabled={submitting || submitted}
+									/>
+									<Space h="md" />
+									<PasswordInput
+										placeholder="Enter your password"
+										autoComplete="password"
+										id="your-password"
+										icon={<IconLock />}
+										{...form.getInputProps("password")}
+										disabled={submitting || submitted}
+										visible={submitting || submitted ? false : undefined}
+									/>
+									<Space h="md" />
+									<Center>
+										<Button
+											radius="xl"
+											w="100%"
+											type="submit"
+											loading={submitting}
+											loaderProps={{
+												size: "xs",
+												variant: "dots"
+											}}
+											loaderPosition="right"
+											disabled={submitted}
+										>
+											Login
+										</Button>
+									</Center>
+								</form>
+						  ]}
 				</Card>
 			</Center>
 		</div>

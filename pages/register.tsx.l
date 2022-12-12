@@ -9,18 +9,24 @@ import axios from "axios";
 import { slugRegex } from "../lib/utils/common";
 import validUrl from "valid-url";
 import PasswordInput from "../components/PasswordInput";
+import { GeneratedUrlData } from "./api/urls/generate";
 import Clipboard from "react-clipboard.js";
+import Image from "next/image";
 import Head from "next/head";
-import Logo from "../components/Logo";
-import request, { ApiUrlsGenerateResponse } from "../lib/api";
 
-const getSlugError = async (slug: string) => {
-	try {
-		const res = await request("/urls/validate", { slug });
-		if (res.success) return null;
-		if (res.status === 400) return res.fields.slug!;
-	} catch (e) {}
-	return "An error occurred.";
+const isValidSlug = async (slug: string) => {
+	return (
+		await axios
+			.post(env.BASE_URL + "/api/urls/geturl", {
+				slug
+			})
+			.catch((err) => {
+				if (err?.response?.status === 404) return null;
+				return { data: { valid: false } };
+			})
+	)?.data
+		? false
+		: true;
 };
 
 const CopyButton = (props: ButtonProps & { value: string }) => {
@@ -45,8 +51,8 @@ const CopyButton = (props: ButtonProps & { value: string }) => {
 	);
 };
 
-const Home: NextPage = () => {
-	const [url, setUrl] = useState<ApiUrlsGenerateResponse | null>(null);
+const Login: NextPage = () => {
+	const [url, setUrl] = useState<GeneratedUrlData | null>(null);
 	const [slugLoading, setSlugLoading] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 	const form = useForm({
@@ -78,40 +84,33 @@ const Home: NextPage = () => {
 	//To finish the loading state for slug
 	useEffect(() => {
 		if (!slug || !slugRegex.test(slug)) return setSlugLoading(false);
-		getSlugError(slug).then((error) => {
+		isValidSlug(slug).then((isValid) => {
 			setSlugLoading(false);
-			sfe("slug", error);
+			sfe("slug", isValid ? null : "Slug already exists");
 		});
 	}, [slug, sfe]);
 
 	const handleSubmit = async (values: typeof form["values"]) => {
 		//Set loading state
 		setSubmitting(true);
-
 		//remove all falsy values
 		const req = Object.fromEntries(Object.entries(values).filter(([, v]) => v)) as typeof values;
+		const res = (
+			await axios
+				.post<{ slug: string }, { data: GeneratedUrlData }>(env.BASE_URL + "/api/urls/generate", req)
+				.catch(console.error)
+				.finally(() => {
+					setSubmitting(false);
+				})
+		)?.data;
 
-		try {
-			const res = await request("/urls/generate", req);
-			if (res.status === 200) setUrl(res);
-			if (res.status === 400) {
-				const errors = res.fields;
-				for (const [key, value] of Object.entries(errors)) {
-					sfe(key, value);
-				}
-			}
-		} catch (e) {
-			console.error(e);
-		}
-
-		//End loading state
-		setSubmitting(false);
+		if (res) setUrl(res);
 	};
 
 	return (
 		<div>
 			<Head>
-				<title>Profyl - Generate URL</title>
+				<title>Profyl - Login</title>
 			</Head>
 			<Center
 				h="100vh"
@@ -120,7 +119,12 @@ const Home: NextPage = () => {
 					flexDirection: "column"
 				}}
 			>
-				<Logo />
+				<Image
+					src="/logo.svg"
+					alt="Logo"
+					width={100}
+					height={100}
+				/>
 				<Space h="xl" />
 				<Card
 					shadow="md"
@@ -135,7 +139,7 @@ const Home: NextPage = () => {
 						weight="bold"
 						align="center"
 					>
-						Shorten URL
+						Login
 					</Text>
 					<Space h="sm" />
 
@@ -227,4 +231,4 @@ const Home: NextPage = () => {
 	);
 };
 
-export default Home;
+export default Login;

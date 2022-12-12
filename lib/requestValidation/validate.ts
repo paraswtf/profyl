@@ -1,10 +1,20 @@
-import { AnyObjectSchema } from "yup";
-import APIError from "../utils/APIError";
+import { AnyObjectSchema, ValidationError } from "yup";
+import { ApiPathList } from "../api";
 
-export default function getValidObject<T>(data: T, schema: AnyObjectSchema): T | APIError {
+const getErrorMessages = ({ path, message, inner }: ValidationError & { path: string }) => {
+	if (inner && inner.length) {
+		return inner.reduce((acc: any, { path, message }) => {
+			acc[path!] = message;
+			return acc;
+		}, {});
+	}
+	return { [path]: message };
+};
+
+export default function getValidObject<T extends ApiPathList[keyof ApiPathList]["request"]>(data: T, schema: AnyObjectSchema): (T & { error: undefined }) | ({ error: true } & { [K in keyof T]?: string }) {
 	try {
 		return schema.cast(schema.validateSync(data));
 	} catch (e: any) {
-		return new APIError({ status: 400, message: "Your JSON does not pass validation :/", name: "BAD_REQUEST" });
+		return { error: true, ...getErrorMessages(e) };
 	}
 }

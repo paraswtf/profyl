@@ -1,5 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { boolean, object, string } from "yup";
+import { object, string } from "yup";
 import { getCookie } from "../../../lib/cookies";
 import hash from "../../../lib/hash";
 import { Session } from "../../../lib/models/Session";
@@ -8,58 +7,76 @@ import { User } from "../../../lib/models/User";
 import connect from "../../../lib/mongoose";
 import validate from "../../../lib/requestValidation/validate";
 import { generateSlug } from "../../../lib/uniqueID";
-import APIError from "../../../lib/utils/APIError";
 import { checkIfExisting } from "./validate";
+import { internalError, notAllowed, Request, Response } from "../../../lib/api";
+import { getDatabaseUser } from "../../../lib/utils";
 
-const schema = object().shape({
+const schema = object({
 	url: string().required().url(),
 	password: string().min(1).default(undefined),
-	prependUsername: boolean().default(false),
 	slug: string()
 		.matches(/(?!^[\.\_])(?![\.\_]$)(?!.*[\.\_]{2,})^[a-zA-Z0-9\.\_]+$/)
 		.default(undefined)
 });
 
-export interface GeneratedUrlData {
-	success: true;
-	slug: string;
-}
+export default async function generate(req: Request<"/urls/generate">, res: Response<"/urls/generate">) {
+	try {
+		switch (req.method) {
+			case "POST":
+				const d = validate(req.body, schema);
+				if (d.error)
+					return res.status(400).json({
+						success: false,
+						status: 400,
+						name: "INVALID_DATA",
+						message: "Invalid json in request.",
+						fields: d
+					});
 
-export default async function generate(req: NextApiRequest, res: NextApiResponse<GeneratedUrlData | APIError>) {
-	switch (req.method) {
-		case "POST":
-			const d = validate(req.body, schema);
-			if (d instanceof APIError) return APIError.badRequest(req, res, d);
+				//Hash the password if it exists
+				if (d.password) d.password = hash(d.password);
 
-			//Hash the password if it exists
-			if (d.password) d.password = hash(d.password);
+				const token = getCookie(req, "session");
+				const user = token ? await getDatabaseUser(token) : null;
 
-			const token = getCookie(req, "session");
-			//Connect to db
-			await connect();
-			const user = await Session.findOne({ token })
-				.then((session) => (session ? User.findById(session.userId).catch(() => null) : null))
-				.catch(() => null);
+				//Check if user is logged in if they want to use a custom slug
+				if (d.slug && (!token || !user))
+					return res.status(400).json({
+						success: false,
+						status: 400,
+						name: "INVALID_DATA",
+						message: "You must be logged in to use custom slugs.",
+						fields: {
+							slug: "You must be logged in to use custom slugs."
+						}
+					});
 
-			//Removed login check for beta
-			//if (!user && (d.prependUsername || d.slug)) return res.status(401).json(new APIError({ status: 401, name: "UNAUTHORIZED", message: "You must be logged in to use this feature." }));
+				const slug = d.slug ?? generateSlug();
 
-			const slug = d.slug ?? generateSlug();
-			const finalSlug = user && d.prependUsername ? `${user.username}/${slug}` : slug;
+				//Check if already exists
+				if (await checkIfExisting(slug))
+					return res.status(400).json({
+						success: false,
+						status: 400,
+						name: "INVALID_DATA",
+						message: "Slug already exists",
+						fields: {
+							slug: "Slug already exists"
+						}
+					});
 
-			//Check if already exists
-			if (await checkIfExisting(finalSlug)) return res.status(409).json(new APIError({ status: 409, name: "CONFLICT", message: "This slug is already taken." }));
-
-			return URL.create({
-				slug: finalSlug,
-				url: d.url,
-				password: d.password,
-				userId: user?._id ?? null
-			})
-				.then(() => res.status(200).json({ success: true, slug: finalSlug }))
-				.catch(() => APIError.internalError(req, res));
-			break;
-		default:
-			APIError.notAllowed(req, res);
+				//Make sure the database is connected
+				await connect();
+				return URL.create({
+					slug,
+					url: d.url,
+					password: d.password,
+					userId: user?._id ?? null
+				}).then(() => res.status(200).json({ status: 200, success: true, slug }));
+			default:
+				return notAllowed(req, res);
+		}
+	} catch (err) {
+		internalError(err, res);
 	}
 }
