@@ -82,7 +82,7 @@ export default async function login(req: Request<"/users/login">, res: Response<
 
 					//Send the verification email if MFA is enabled
 					if (code || verificationToken) {
-						sendVerificationMail(user.email, code, verificationToken);
+						await sendVerificationMail(user.email, code, verificationToken);
 						return res.status(401).json({
 							success: false,
 							status: 401,

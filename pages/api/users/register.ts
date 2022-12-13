@@ -55,7 +55,7 @@ export default async function register(req: Request<"/users/register">, res: Res
 					setCookie(res, "session", token);
 
 					//Send the verification email
-					if (code || verificationToken) sendVerificationMail(d.email, code, verificationToken);
+					if (code || verificationToken) await sendVerificationMail(d.email, code, verificationToken);
 
 					//Send the success response
 					res.status(200).json({ status: 200, success: true, email: obfuscateMail(d.email) });
