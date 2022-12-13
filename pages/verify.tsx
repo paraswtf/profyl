@@ -1,11 +1,12 @@
-import type { NextApiRequest, NextPage, NextPageContext } from "next";
-import { Center, Card, Text, Space, Chip } from "@mantine/core";
+import type { NextApiRequest } from "next";
+import { Center, Card, Text, Space, Chip, InputProps } from "@mantine/core";
 import Image from "next/image";
 import Head from "next/head";
 import { IconCircleCheck, IconCircleX, IconMail } from "@tabler/icons";
 import jwt from "jsonwebtoken";
 import request from "../lib/api";
 import { PinInput } from "../components/PinInput";
+import { Dispatch, SetStateAction, useState } from "react";
 
 function verificationStatus(error: string | null) {
 	return (
@@ -46,8 +47,19 @@ function verificationStatus(error: string | null) {
 	);
 }
 
-export function verificationInput(email: string) {
-	return (
+async function handleVerify(code: string) {
+	try {
+		const res = await request("/sessions/verify", { code });
+		if (res.status === 200) return null;
+		else if (res.status === 400) return res.message;
+	} catch (e) {}
+	return "An error occurred while verifying your session.";
+}
+
+export const useVerificationInput = (props: { email: string; error: string | null; setError: Dispatch<SetStateAction<string | null>>; loading: boolean; setLoading: Dispatch<SetStateAction<boolean>> }) => {
+	return props.error ? (
+		verificationStatus(props.error)
+	) : (
 		<Center
 			style={{
 				flexDirection: "column"
@@ -67,22 +79,26 @@ export function verificationInput(email: string) {
 			>
 				<Center>
 					<IconMail size={"15px"} /> <Space w={5} />
-					{email}
+					{props.email}
 				</Center>
 			</Chip>
 			<Space h="xl" />
 			<PinInput
 				length={6}
-				onComplete={(value: string, index: number) => {
-					window.location.assign(`/verify?code=${value}`);
+				disabled={props.loading}
+				onComplete={async (value: string) => {
+					props.setLoading(true);
+					const error = await handleVerify(value);
+					if (!error) window.location.assign(`/`);
+					else props.setError(error);
 				}}
 			/>
 			<Space h="md" />
 		</Center>
 	);
-}
+};
 
-export default function verify({ success, error }: ServerSideProps) {
+export default function verify({ error }: ServerSideProps) {
 	return (
 		<div>
 			<Head>
@@ -110,62 +126,31 @@ export default function verify({ success, error }: ServerSideProps) {
 					w="min(350px, calc(100vw - 30px))"
 					sx={{ overflow: "visible", flexDirection: "row" }}
 				>
-					{!success && !error ? verificationInput("your email") : verificationStatus(error)}
+					{verificationStatus(error)}
 				</Card>
 			</Center>
 		</div>
 	);
 }
 
-export async function getServerSideProps(context: { query: { code: string }; req: NextApiRequest }): Promise<{ props: ServerSideProps } | { redirect?: { destination: string } }> {
-	const { code } = context.query;
-	if (!code) {
-		return {
-			props: {
-				success: false,
-				error: null
-			}
-		};
-	}
+export async function getServerSideProps(context: { query: { token: string }; req: NextApiRequest }): Promise<{ props: ServerSideProps } | { redirect?: { destination: string } }> {
+	const { token } = context.query;
+	if (!token) return { props: { error: "No token provided." } };
 
 	try {
-		const res = await request("/sessions/verify", {
-			code
-		});
-		console.log(res);
+		const res = await request("/sessions/verify", { verificationToken: token });
 
 		if (res.status === 200) {
 			const isCurrentSession = !!context.req.cookies.session && (jwt.decode(context.req.cookies.session) as any)?.userID === res.userID;
 			if (isCurrentSession) return { redirect: { destination: "/" } };
-			else
-				return {
-					props: {
-						success: true,
-						error: null
-					}
-				};
+			else return { props: { error: null } };
 		}
 
-		if (res.status === 400) {
-			return {
-				props: {
-					success: false,
-					error: "Invalid or expired code."
-				}
-			};
-		}
+		if (res.status === 400) return { props: { error: "Invalid or expired code." } };
 	} catch (err) {
 		console.error(err);
 	}
-	return {
-		props: {
-			success: false,
-			error: "An error occurred while verifying the session."
-		}
-	};
+	return { props: { error: "An error occurred while verifying the session." } };
 }
 
-type ServerSideProps = {
-	success: boolean;
-	error: string | null;
-};
+type ServerSideProps = { error: string | null };

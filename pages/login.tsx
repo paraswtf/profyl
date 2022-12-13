@@ -8,12 +8,15 @@ import Image from "next/image";
 import Head from "next/head";
 import { LoginRequest } from "./api/users/login";
 import request from "../lib/api";
-import { verificationInput } from "./verify";
+import { useVerificationInput } from "./verify";
 
 const Login: NextPage = () => {
 	const [submitting, setSubmitting] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
 	const [mfaEmail, setMfaEmail] = useState<string | null>(null);
+	//States for verification input
+	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
 	const form = useForm({
 		initialValues: {
 			username: "",
@@ -85,7 +88,8 @@ const Login: NextPage = () => {
 					sx={{ overflow: "visible" }}
 				>
 					{mfaEmail
-						? verificationInput(mfaEmail)
+						? // eslint-disable-next-line react-hooks/rules-of-hooks
+						  useVerificationInput({ email: mfaEmail, error, setError, loading, setLoading })
 						: [
 								<Text
 									size={24}
