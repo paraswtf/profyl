@@ -81,7 +81,7 @@ export default async function login(req: Request<"/users/login">, res: Response<
 					setCookie(res, "session", token);
 
 					//Send the verification email if MFA is enabled
-					if (typeof code === "string") {
+					if (code || verificationToken) {
 						sendVerificationMail(user.email, code, verificationToken);
 						return res.status(401).json({
 							success: false,
