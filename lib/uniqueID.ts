@@ -1,6 +1,6 @@
-import ShortUniqueId from "short-unique-id";
-const code = new ShortUniqueId({ length: 6, dictionary: "number" });
-const slug = new ShortUniqueId({ length: 7 });
+import ShortUniqueID from "short-unique-id";
+const code = new ShortUniqueID({ length: 6, dictionary: "number" });
+const slug = new ShortUniqueID({ length: 7 });
 
 export function generateCode() {
 	return code();

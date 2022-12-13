@@ -5,9 +5,13 @@ import { object, string } from "yup";
 import validate from "../../../lib/requestValidation/validate";
 import { User } from "../../../lib/models/User";
 import { Request, Response, notAllowed, internalError } from "../../../lib/api";
+import jwt from "jsonwebtoken";
+import env from "../../../lib/env";
+import { getCookie } from "../../../lib/cookies";
 
 const schema = object({
-	code: string().required("Missing 'code'.").length(6, "Invalid 'code'.").matches(/^\d+$/, "Invalid 'code'.")
+	code: string().length(6, "Invalid 'code'.").matches(/^\d+$/, "Invalid 'code'."),
+	verificationToken: string()
 }).noUnknown();
 
 export default async function verify(req: Request<"/sessions/verify">, res: Response<"/sessions/verify">) {
@@ -25,44 +29,114 @@ export default async function verify(req: Request<"/sessions/verify">, res: Resp
 						fields: d
 					});
 
-				await connect();
-
-				//Find the code document and delete it
-				return MFA.findOneAndDelete({ code: d.code }).then((mfa) => {
-					//If the code is not found, invalid code
-					if (!mfa)
-						return res.status(400).json({
-							success: false,
-							status: 400,
-							name: "INVALID_DATA",
-							message: "Could not find code.",
-							fields: {
-								code: "Invalid 'code'."
-							}
-						});
-
-					//Find the session and update it
-					Session.findByIdAndUpdate({ _id: mfa.sessionID }, { verified: true, emailVerified: true }).then((session) => {
-						//If the session is not found, invalid code
-						if (!session)
+				//Token based verification
+				if (d.verificationToken) {
+					//Verify token, will go to catch if invalid
+					return jwt.verify(d.verificationToken, env.JWT_SECRET, async (err, decoded: any) => {
+						if (err || !decoded)
 							return res.status(400).json({
 								success: false,
 								status: 400,
 								name: "INVALID_DATA",
-								message: "Could not find session.",
+								message: "Invalid verification token.",
+								fields: {
+									verificationToken: "Invalid verification token."
+								}
+							});
+
+						//If the token is verified ensure connection
+						await connect();
+						//Find the unverified session and verify it
+						return Session.findByIdAndUpdate({ _id: decoded.sessionID, verified: false }, { verified: true }).then((session) => {
+							//If the session is not found, invalid token
+							if (!session)
+								return res.status(400).json({
+									success: false,
+									status: 400,
+									name: "INVALID_DATA",
+									message: "Invalid verification token.",
+									fields: {
+										verificationToken: "Invalid verification token."
+									}
+								});
+							//Set the user to verifiedEmail in case it isnt already
+							if (!session.emailVerified) User.findByIdAndUpdate({ _id: session.userID }, { emailVerified: true });
+
+							//Return success
+							return res.status(200).json({
+								status: 200,
+								success: true,
+								userID: session.userID
+							});
+						});
+					});
+				}
+
+				//Code based verification
+				const token = getCookie(req, "session");
+				if (!token)
+					return res.status(400).json({
+						success: false,
+						status: 400,
+						name: "INVALID_DATA",
+						message: "No valid unverified session.",
+						fields: {
+							verificationToken: "No valid unverified session."
+						}
+					});
+
+				return jwt.verify(token, env.JWT_SECRET, async (err, decoded: any) => {
+					if (err || !decoded)
+						return res.status(400).json({
+							success: false,
+							status: 400,
+							name: "INVALID_DATA",
+							message: "No valid unverified session.",
+							fields: {
+								verificationToken: "No valid unverified session."
+							}
+						});
+
+					//Ensure connection
+					await connect();
+
+					//Find the code document and delete it
+					return MFA.findOneAndDelete({ code: d.code, sessionID: decoded.sessionID }).then((mfa) => {
+						//If the code is not found, invalid code
+						if (!mfa)
+							return res.status(400).json({
+								success: false,
+								status: 400,
+								name: "INVALID_DATA",
+								message: "Could not find code.",
 								fields: {
 									code: "Invalid 'code'."
 								}
 							});
 
-						//Set the user to verifiedEmail in case it isnt already
-						if (!session.emailVerified) User.findByIdAndUpdate({ _id: session.userId }, { emailVerified: true });
+						//Find the session and update it
+						return Session.findByIdAndUpdate({ _id: mfa.sessionID }, { verified: true, emailVerified: true }).then((session) => {
+							//If the session is not found, invalid code
+							if (!session)
+								return res.status(400).json({
+									success: false,
+									status: 400,
+									name: "INVALID_DATA",
+									message: "Could not find session.",
+									fields: {
+										code: "Invalid 'code'."
+									}
+								});
 
-						//If the session was found, return success
-						return res.status(200).json({
-							status: 200,
-							success: true,
-							userId: session.userId
+							//Set the user to verifiedEmail in case it isnt already
+							if (!session.emailVerified) User.findByIdAndUpdate({ _id: session.userID }, { emailVerified: true });
+
+							//If the session was found, return success
+							return res.status(200).json({
+								status: 200,
+								success: true,
+								userID: session.userID
+							});
 						});
 					});
 				});

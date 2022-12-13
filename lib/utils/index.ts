@@ -17,7 +17,7 @@ export async function getDatabaseUser(token: string) {
 
 		return Session.findOne({ token }).then((session) => {
 			if (!session || !session.verified) return null;
-			return User.findById(session.userId).then((user) => {
+			return User.findById(session.userID).then((user) => {
 				if (!user) return null;
 				return user;
 			});

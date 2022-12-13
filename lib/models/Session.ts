@@ -6,7 +6,7 @@ const SessionSchema = new Schema({
 		required: true,
 		unique: true
 	},
-	userId: {
+	userID: {
 		type: Schema.Types.ObjectId,
 		required: true,
 		ref: "User"
@@ -42,7 +42,7 @@ export const Session = (models.Session as Model<SessionData>) || model<SessionDa
 
 export interface SessionData {
 	token: string;
-	userId: string;
+	userID: string;
 	location: {
 		userAgent: string;
 		ip: string;

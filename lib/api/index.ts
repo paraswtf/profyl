@@ -120,11 +120,17 @@ export type InternalServerError = ErrorResponse & {
 };
 
 // /api/sessions/verify
-export interface ApiSessionsVerifyRequest {
-	code: string;
-}
+export type ApiSessionsVerifyRequest =
+	| {
+			code: string;
+			verificationToken?: undefined;
+	  }
+	| {
+			code?: undefined;
+			verificationToken: string;
+	  };
 export interface ApiSessionsVerifyResponse extends SuccessResponse {
-	userId: string;
+	userID: string;
 }
 export type ApiSessionsVerifyErrorResponse = ValidationError<ApiSessionsVerifyRequest>;
 

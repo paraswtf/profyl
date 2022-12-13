@@ -31,7 +31,7 @@ export default async function login(req: Request<"/users/details">, res: Respons
 						});
 
 					//Find the user
-					return User.findById(session.userId).then((user) => {
+					return User.findById(session.userID).then((user) => {
 						if (!user)
 							return res.status(401).json({
 								success: false,

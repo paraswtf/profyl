@@ -70,12 +70,11 @@ export class PinInput extends Component {
 	}
 
 	onPaste(value) {
-		const { length } = this.props;
-		if (value.length !== length) {
-			return;
-		}
+		const length = Math.min(value.length, this.props.length);
 
-		this.elements.forEach((el, index) => el.update(value[index], true));
+		for (let i = 0; i < length; i++) {
+			this.elements[i].update(value[i], true);
+		}
 	}
 
 	render() {

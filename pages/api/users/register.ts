@@ -49,13 +49,13 @@ export default async function register(req: Request<"/users/register">, res: Res
 				//Create the user
 				User.create(d).then(async (user) => {
 					//Create a session
-					const { token, code } = await generateSession(user._id, true, false, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
+					const { token, code, verificationToken } = await generateSession(user._id, true, false, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
 
 					//Set the cookie
 					setCookie(res, "session", token);
 
 					//Send the verification email
-					typeof code === "string" ? sendVerificationMail(d.email, code) : null;
+					typeof code === "string" ? sendVerificationMail(d.email, code, verificationToken) : null;
 
 					//Send the success response
 					res.status(200).json({ status: 200, success: true, email: obfuscateMail(d.email) });

@@ -9,13 +9,15 @@ import { generateCode } from "./uniqueID";
 
 export async function generateSession(userID: Types.ObjectId, mfaEnabled?: boolean, emailVerified?: boolean, ip?: string, userAgent?: string) {
 	await connect();
-	const token = jwt.sign({ userID }, env.JWT_SECRET, { expiresIn: "7d" });
+	const sessionID = new Types.ObjectId();
+	const token = jwt.sign({ userID, sessionID }, env.JWT_SECRET, { expiresIn: "7d" });
 
 	const location = ip ? await axios.get(`https://geolocation-db.com/json/${ip}`).catch(() => {}) : undefined;
 
 	const session = await Session.create({
+		_id: sessionID,
 		token,
-		userId: userID,
+		userID: userID,
 		location: {
 			userAgent,
 			ip,
@@ -32,12 +34,13 @@ export async function generateSession(userID: Types.ObjectId, mfaEnabled?: boole
 	});
 
 	if (mfaEnabled) {
+		const verificationToken = jwt.sign({ sessionID: session.id }, env.JWT_SECRET, { expiresIn: "5m" });
 		const { code } = await MFA.create({
 			sessionID: session._id,
 			code: generateCode(),
 			createdAt: new Date()
 		});
-		return { token, code };
+		return { token, code, verificationToken };
 	}
 
 	return { token };

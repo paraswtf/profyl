@@ -132,9 +132,10 @@ export async function getServerSideProps(context: { query: { code: string }; req
 		const res = await request("/sessions/verify", {
 			code
 		});
+		console.log(res);
 
 		if (res.status === 200) {
-			const isCurrentSession = !!context.req.cookies.session && (jwt.decode(context.req.cookies.session) as any)?.userID === res.userId;
+			const isCurrentSession = !!context.req.cookies.session && (jwt.decode(context.req.cookies.session) as any)?.userID === res.userID;
 			if (isCurrentSession) return { redirect: { destination: "/" } };
 			else
 				return {

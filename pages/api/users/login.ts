@@ -75,14 +75,14 @@ export default async function login(req: Request<"/users/login">, res: Response<
 						});
 
 					//Create a session
-					const { token, code } = await generateSession(user._id, user.mfaEnabled, user.emailVerified, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
+					const { token, code, verificationToken } = await generateSession(user._id, user.mfaEnabled, user.emailVerified, request.getClientIp(req) ?? undefined, req.headers["user-agent"]);
 
 					//Set the cookie
 					setCookie(res, "session", token);
 
 					//Send the verification email if MFA is enabled
 					if (typeof code === "string") {
-						sendVerificationMail(user.email, code);
+						sendVerificationMail(user.email, code, verificationToken);
 						return res.status(401).json({
 							success: false,
 							status: 401,

@@ -26,7 +26,7 @@ const URLSchema = new Schema({
 export const URL = (models.URL as Model<URLData>) || model<URLData>("URL", URLSchema);
 
 export interface URLData {
-	userId: string | null;
+	userID: string | null;
 	slug: string;
 	url: string;
 	password: string | null;

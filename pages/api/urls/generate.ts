@@ -71,7 +71,7 @@ export default async function generate(req: Request<"/urls/generate">, res: Resp
 					slug,
 					url: d.url,
 					password: d.password,
-					userId: user?._id ?? null
+					userID: user?._id ?? null
 				}).then(() => res.status(200).json({ status: 200, success: true, slug }));
 			default:
 				return notAllowed(req, res);
