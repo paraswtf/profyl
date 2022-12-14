@@ -15,7 +15,8 @@ const schema = object({
 	username: string().required().min(3).max(24).matches(usernameRegex),
 	password: string().required().min(8),
 	email: string().lowercase().required().email(),
-	emailSubscription: boolean().default(false)
+	emailSubscription: boolean().default(false),
+	mfaEnabled: boolean().default(false)
 }).noUnknown();
 
 export default async function register(req: Request<"/users/register">, res: Response<"/users/register">) {

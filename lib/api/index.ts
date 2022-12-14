@@ -208,6 +208,7 @@ export interface ApiUsersRegisterRequest {
 	email: string;
 	password: string;
 	emailSubscription: boolean;
+	mfaEnabled: boolean;
 }
 export interface ApiUsersRegisterResponse extends SuccessResponse {
 	//Sends back an obfuscated email to be displayed to the user

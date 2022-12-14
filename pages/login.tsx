@@ -9,6 +9,7 @@ import Head from "next/head";
 import { LoginRequest } from "./api/users/login";
 import request from "../lib/api";
 import { useVerificationInput } from "./verify";
+import Link from "next/link";
 
 const Login: NextPage = () => {
 	const [submitting, setSubmitting] = useState(false);
@@ -145,6 +146,25 @@ const Login: NextPage = () => {
 									</Center>
 								</form>
 						  ]}
+					<Space h="md" />
+					<Text
+						c="primary"
+						size="sm"
+						align="center"
+						w="100%"
+					>
+						{"Don't have an account? "}
+						<Link href="/register">
+							<Text
+								span
+								c="blue.5"
+								inherit
+								underline
+							>
+								Sign up
+							</Text>
+						</Link>
+					</Text>
 				</Card>
 			</Center>
 		</div>

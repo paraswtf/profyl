@@ -36,7 +36,7 @@ const UserSchema = new Schema({
 	},
 	mfaEnabled: {
 		type: Boolean,
-		default: true
+		default: false
 	}
 });
 
