@@ -56,7 +56,7 @@ async function handleVerify(code: string) {
 	return "An error occurred while verifying your session.";
 }
 
-export const useVerificationInput = (props: { email: string; error: string | null; setError: Dispatch<SetStateAction<string | null>>; loading: boolean; setLoading: Dispatch<SetStateAction<boolean>> }) => {
+export const verificationInput = (props: { email: string; error: string | null; setError: Dispatch<SetStateAction<string | null>>; loading: boolean; setLoading: Dispatch<SetStateAction<boolean>> }) => {
 	return props.error ? (
 		verificationStatus(props.error)
 	) : (

@@ -3,13 +3,12 @@ import { Center, Card, Text, Space, TextInput, Button, PasswordInput, Switch, Ch
 import { useForm } from "@mantine/form";
 import { IconLock, IconLockAccess, IconMail, IconUser } from "@tabler/icons";
 import { useState } from "react";
-import axios from "axios";
 import Image from "next/image";
 import Head from "next/head";
-import { LoginRequest } from "./api/users/login";
-import request from "../lib/api";
-import { useVerificationInput } from "./verify";
+import { verificationInput } from "./verify";
 import Link from "next/link";
+import request, { ApiUsersRegisterRequest } from "../lib/api";
+import Logo from "../components/Logo";
 
 const Register: NextPage = () => {
 	const [submitting, setSubmitting] = useState(false);
@@ -52,7 +51,28 @@ const Register: NextPage = () => {
 	const handleSubmit = async (values: typeof form["values"]) => {
 		//Set loading state
 		setSubmitting(true);
-		return console.log(values);
+		const req: ApiUsersRegisterRequest = {
+			username: values.username,
+			email: values.email,
+			password: values.password,
+			mfaEnabled: values.mfaEnabled,
+			emailSubscription: values.emailSubscription
+		};
+		try {
+			const res = await request("/users/register", req);
+			if (res.status === 200) {
+				setMfaEmail(res.email);
+			}
+			if (res.status === 400) {
+				form.setFieldError("username", res.fields.username);
+				form.setFieldError("password", res.fields.password);
+				form.setFieldError("email", res.fields.email);
+			}
+		} catch (e) {
+			console.error(e);
+		}
+
+		setSubmitting(false);
 	};
 
 	return (
@@ -67,12 +87,7 @@ const Register: NextPage = () => {
 					flexDirection: "column"
 				}}
 			>
-				<Image
-					src="/logo.svg"
-					alt="Logo"
-					width={100}
-					height={100}
-				/>
+				<Logo />
 				<Space h="xl" />
 				<Card
 					shadow="md"
@@ -82,144 +97,144 @@ const Register: NextPage = () => {
 					w="min(350px, calc(100vw - 30px))"
 					sx={{ overflow: "visible" }}
 				>
-					{mfaEmail
-						? // eslint-disable-next-line react-hooks/rules-of-hooks
-						  useVerificationInput({ email: mfaEmail, error, setError, loading, setLoading })
-						: [
-								<Text
-									size={24}
-									weight="bold"
-									align="center"
-									key="a"
-								>
-									Sign up
-								</Text>,
-								<Space
-									h="sm"
-									key="b"
-								/>,
-
-								<form
-									onSubmit={form.onSubmit(handleSubmit)}
-									key="c"
-								>
-									<TextInput
-										placeholder="Enter your username"
-										autoComplete="username"
-										icon={<IconUser />}
-										withAsterisk={true}
-										{...form.getInputProps("username")}
-										disabled={submitting || submitted}
-										//Lowercase conversion
-										onChangeCapture={(e) => (e.currentTarget.value = e.currentTarget.value.toLowerCase())}
-									/>
-									<Space h="md" />
-									<TextInput
-										placeholder="Enter your email"
-										autoComplete="email"
-										icon={<IconMail />}
-										withAsterisk={true}
-										{...form.getInputProps("email")}
-										disabled={submitting || submitted}
-										//Lowercase conversion
-										onChangeCapture={(e) => (e.currentTarget.value = e.currentTarget.value.toLowerCase())}
-									/>
-									<Space h="md" />
-									<PasswordInput
-										placeholder="Create a password"
-										autoComplete="password"
-										id="your-password"
-										icon={<IconLock />}
-										{...form.getInputProps("password")}
-										disabled={submitting || submitted}
-										visible={submitting || submitted ? false : undefined}
-									/>
-									<Space h="md" />
-									<PasswordInput
-										placeholder="Confirm your password"
-										autoComplete="password"
-										id="your-password"
-										icon={<IconLockAccess />}
-										{...form.getInputProps("confirmPassword")}
-										disabled={submitting || submitted}
-										visible={submitting || submitted ? false : undefined}
-									/>
-									<Switch
-										{...form.getInputProps("mfaEnabled", { type: "checkbox" })}
-										disabled={submitting || submitted}
-										size="sm"
-										label="Enable 2FA (recommended)"
-										styles={{ trackLabel: { cursor: "pointer" }, thumb: { cursor: "pointer" } }}
-										labelPosition="left"
-									/>
-									<Divider my="sm" />
-									<Checkbox
-										{...form.getInputProps("emailSubscription", { type: "checkbox" })}
-										disabled={submitting || submitted}
-										size="sm"
-										label="Get notified about new features"
-										styles={{ input: { cursor: "pointer" } }}
-									/>
-									<Checkbox
-										{...form.getInputProps("tos", { type: "checkbox", withError: true, withFocus: true })}
-										//disabled={submitting || submitted}
-										size="sm"
-										label={
-											<>
-												{"I agree to to the "}
-												<Link href="/tos">
+					{mfaEmail ? (
+						// eslint-disable-next-line react-hooks/rules-of-hooks
+						verificationInput({ email: mfaEmail, error, setError, loading, setLoading })
+					) : (
+						<>
+							<Text
+								size={24}
+								weight="bold"
+								align="center"
+							>
+								Sign up
+							</Text>
+							<Space h="sm" />
+							<form onSubmit={form.onSubmit(handleSubmit)}>
+								<TextInput
+									placeholder="Enter your username"
+									autoComplete="username"
+									icon={<IconUser />}
+									withAsterisk={true}
+									{...form.getInputProps("username")}
+									disabled={submitting || submitted}
+									//Lowercase conversion
+									onChangeCapture={(e) => (e.currentTarget.value = e.currentTarget.value.toLowerCase())}
+								/>
+								<Space h="md" />
+								<TextInput
+									placeholder="Enter your email"
+									autoComplete="email"
+									icon={<IconMail />}
+									withAsterisk={true}
+									{...form.getInputProps("email")}
+									disabled={submitting || submitted}
+									//Lowercase conversion
+									onChangeCapture={(e) => (e.currentTarget.value = e.currentTarget.value.toLowerCase())}
+								/>
+								<Space h="md" />
+								<PasswordInput
+									placeholder="Create a password"
+									autoComplete="password"
+									id="your-password"
+									icon={<IconLock />}
+									{...form.getInputProps("password")}
+									disabled={submitting || submitted}
+									visible={submitting || submitted ? false : undefined}
+								/>
+								<Space h="md" />
+								<PasswordInput
+									placeholder="Confirm your password"
+									autoComplete="password"
+									id="your-password"
+									icon={<IconLockAccess />}
+									{...form.getInputProps("confirmPassword")}
+									disabled={submitting || submitted}
+									visible={submitting || submitted ? false : undefined}
+								/>
+								<Switch
+									{...form.getInputProps("mfaEnabled", { type: "checkbox" })}
+									disabled={submitting || submitted}
+									size="sm"
+									label="Enable 2FA (recommended)"
+									styles={{ trackLabel: { cursor: "pointer" }, thumb: { cursor: "pointer" } }}
+									labelPosition="left"
+								/>
+								<Divider my="sm" />
+								<Checkbox
+									{...form.getInputProps("emailSubscription", { type: "checkbox" })}
+									disabled={submitting || submitted}
+									size="sm"
+									label="Get notified about new features"
+									styles={{ input: { cursor: "pointer" } }}
+								/>
+								<Checkbox
+									{...form.getInputProps("tos", { type: "checkbox", withError: true, withFocus: true })}
+									//disabled={submitting || submitted}
+									size="sm"
+									label={
+										<>
+											{"I agree to to the "}
+											<Link href="/tos">
+												<Text
+													span
+													c="blue"
+													inherit
+												>
+													{"Terms of Service"}
+													<br />
 													<Text
 														span
 														c="blue"
-														inherit
+														size="xs"
 													>
-														{"Terms of Service"}
-														<br />
 														{"(which don't exist yet)"}
 													</Text>
-												</Link>
-											</>
-										}
-										styles={{ input: { cursor: "pointer" } }}
-									/>
-									<Space h="md" />
-									<Center>
-										<Button
-											radius="xl"
-											w="100%"
-											type="submit"
-											loading={submitting}
-											loaderProps={{
-												size: "xs",
-												variant: "dots"
-											}}
-											loaderPosition="right"
-											disabled={submitted}
-										>
-											Sign up
-										</Button>
-									</Center>
-								</form>
-						  ]}
-					<Space h="md" />
-					<Text
-						c="primary"
-						size="sm"
-						align="center"
-						w="100%"
-					>
-						{"Already have an account? "}
-						<Link href="/login">
+												</Text>
+											</Link>
+										</>
+									}
+									styles={{ input: { cursor: "pointer" } }}
+								/>
+								<Space h="md" />
+								<Center>
+									<Button
+										radius="xl"
+										w="100%"
+										type="submit"
+										loading={submitting}
+										loaderProps={{
+											size: "xs",
+											variant: "dots"
+										}}
+										loaderPosition="right"
+										disabled={submitted}
+									>
+										Sign up
+									</Button>
+								</Center>
+							</form>
+							<Space h="md" />
 							<Text
-								span
-								c="blue.5"
-								inherit
-								underline
+								c="primary"
+								size="sm"
+								align="center"
+								w="100%"
 							>
-								Sign in
+								{"Already have an account? "}
+								<Link href="/login">
+									<Text
+										span
+										c="blue.5"
+										inherit
+										underline
+									>
+										Sign in
+									</Text>
+								</Link>
 							</Text>
-						</Link>
-					</Text>
+						</>
+					)}
 				</Card>
 			</Center>
 		</div>

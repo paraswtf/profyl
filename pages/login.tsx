@@ -8,8 +8,9 @@ import Image from "next/image";
 import Head from "next/head";
 import { LoginRequest } from "./api/users/login";
 import request from "../lib/api";
-import { useVerificationInput } from "./verify";
+import { verificationInput } from "./verify";
 import Link from "next/link";
+import Logo from "../components/Logo";
 
 const Login: NextPage = () => {
 	const [submitting, setSubmitting] = useState(false);
@@ -73,12 +74,7 @@ const Login: NextPage = () => {
 					flexDirection: "column"
 				}}
 			>
-				<Image
-					src="/logo.svg"
-					alt="Logo"
-					width={100}
-					height={100}
-				/>
+				<Logo />
 				<Space h="xl" />
 				<Card
 					shadow="md"
@@ -88,83 +84,76 @@ const Login: NextPage = () => {
 					w="min(350px, calc(100vw - 30px))"
 					sx={{ overflow: "visible" }}
 				>
-					{mfaEmail
-						? // eslint-disable-next-line react-hooks/rules-of-hooks
-						  useVerificationInput({ email: mfaEmail, error, setError, loading, setLoading })
-						: [
-								<Text
-									size={24}
-									weight="bold"
-									align="center"
-									key="a"
-								>
-									Login
-								</Text>,
-								<Space
-									h="sm"
-									key="b"
-								/>,
-
-								<form
-									onSubmit={form.onSubmit(handleSubmit)}
-									key="c"
-								>
-									<TextInput
-										placeholder="Enter your username or email"
-										autoComplete="username"
-										icon={<IconUser />}
-										withAsterisk={true}
-										{...form.getInputProps("username")}
-										disabled={submitting || submitted}
-									/>
-									<Space h="md" />
-									<PasswordInput
-										placeholder="Enter your password"
-										autoComplete="password"
-										id="your-password"
-										icon={<IconLock />}
-										{...form.getInputProps("password")}
-										disabled={submitting || submitted}
-										visible={submitting || submitted ? false : undefined}
-									/>
-									<Space h="md" />
-									<Center>
-										<Button
-											radius="xl"
-											w="100%"
-											type="submit"
-											loading={submitting}
-											loaderProps={{
-												size: "xs",
-												variant: "dots"
-											}}
-											loaderPosition="right"
-											disabled={submitted}
-										>
-											Login
-										</Button>
-									</Center>
-								</form>
-						  ]}
-					<Space h="md" />
-					<Text
-						c="primary"
-						size="sm"
-						align="center"
-						w="100%"
-					>
-						{"Don't have an account? "}
-						<Link href="/register">
+					{mfaEmail ? (
+						verificationInput({ email: mfaEmail, error, setError, loading, setLoading })
+					) : (
+						<>
 							<Text
-								span
-								c="blue.5"
-								inherit
-								underline
+								size={24}
+								weight="bold"
+								align="center"
 							>
-								Sign up
+								Login
 							</Text>
-						</Link>
-					</Text>
+							<Space h="sm" />
+							<form onSubmit={form.onSubmit(handleSubmit)}>
+								<TextInput
+									placeholder="Enter your username or email"
+									autoComplete="username"
+									icon={<IconUser />}
+									withAsterisk={true}
+									{...form.getInputProps("username")}
+									disabled={submitting || submitted}
+								/>
+								<Space h="md" />
+								<PasswordInput
+									placeholder="Enter your password"
+									autoComplete="password"
+									id="your-password"
+									icon={<IconLock />}
+									{...form.getInputProps("password")}
+									disabled={submitting || submitted}
+									visible={submitting || submitted ? false : undefined}
+								/>
+								<Space h="md" />
+								<Center>
+									<Button
+										radius="xl"
+										w="100%"
+										type="submit"
+										loading={submitting}
+										loaderProps={{
+											size: "xs",
+											variant: "dots"
+										}}
+										loaderPosition="right"
+										disabled={submitted}
+									>
+										Login
+									</Button>
+								</Center>
+							</form>
+							<Space h="md" />
+							<Text
+								c="primary"
+								size="sm"
+								align="center"
+								w="100%"
+							>
+								{"Don't have an account? "}
+								<Link href="/register">
+									<Text
+										span
+										c="blue.5"
+										inherit
+										underline
+									>
+										Sign up
+									</Text>
+								</Link>
+							</Text>
+						</>
+					)}
 				</Card>
 			</Center>
 		</div>

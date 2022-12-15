@@ -40,7 +40,7 @@ export default async function register(req: Request<"/users/register">, res: Res
 						success: false,
 						status: 400,
 						name: "INVALID_DATA",
-						message: `User with ${err.email ? "email" : "username"} already exists.`,
+						message: `User with ${err.email && err.username ? "username and email" : err.email ? "email" : "username"} already exists.`,
 						fields: err
 					});
 
