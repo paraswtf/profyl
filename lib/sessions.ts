@@ -33,7 +33,7 @@ export async function generateSession(userID: Types.ObjectId, mfaEnabled?: boole
 		verified: !mfaEnabled
 	});
 
-	if (mfaEnabled) {
+	if (mfaEnabled || !emailVerified) {
 		const verificationToken = jwt.sign({ sessionID: session.id }, env.JWT_SECRET, { expiresIn: "5m" });
 		const { code } = await MFA.create({
 			sessionID: session._id,
