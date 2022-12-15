@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import env from "../env";
 import { Session } from "../models/Session";
 import { User } from "../models/User";
 import connect from "../mongoose";
@@ -11,7 +10,7 @@ export function obfuscateMail(email: string) {
 
 export async function getDatabaseUser(token: string) {
 	try {
-		jwt.verify(token, env.JWT_SECRET);
+		jwt.verify(token, process.env.JWT_SECRET);
 
 		await connect();
 

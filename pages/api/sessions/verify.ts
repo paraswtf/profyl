@@ -6,7 +6,6 @@ import validate from "../../../lib/requestValidation/validate";
 import { User } from "../../../lib/models/User";
 import { Request, Response, notAllowed, internalError } from "../../../lib/api";
 import jwt from "jsonwebtoken";
-import env from "../../../lib/env";
 import { getCookie } from "../../../lib/cookies";
 
 const schema = object({
@@ -32,7 +31,7 @@ export default async function verify(req: Request<"/sessions/verify">, res: Resp
 				//Token based verification
 				if (d.verificationToken) {
 					//Verify token, will go to catch if invalid
-					return jwt.verify(d.verificationToken, env.JWT_SECRET, async (err, decoded: any) => {
+					return jwt.verify(d.verificationToken, process.env.JWT_SECRET, async (err, decoded: any) => {
 						if (err || !decoded)
 							return res.status(400).json({
 								success: false,
@@ -85,7 +84,7 @@ export default async function verify(req: Request<"/sessions/verify">, res: Resp
 						}
 					});
 
-				return jwt.verify(token, env.JWT_SECRET, async (err, decoded: any) => {
+				return jwt.verify(token, process.env.JWT_SECRET, async (err, decoded: any) => {
 					if (err || !decoded)
 						return res.status(400).json({
 							success: false,

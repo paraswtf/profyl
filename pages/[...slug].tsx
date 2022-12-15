@@ -1,5 +1,3 @@
-import axios from "axios";
-import env from "../lib/env";
 import { IconLock } from "@tabler/icons";
 import { Center, Card, Text, Space, PasswordInput, Chip, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -20,22 +18,17 @@ export default function Redirect({ slug }: { slug: string }) {
 		//Set submitting to true to show the loader
 		setSubmitting(true);
 
-		const res =
-			(
-				await axios
-					.post(env.BASE_URL + "/api/urls/geturl", {
-						slug,
-						password: values.password
-					})
-					.catch((err) => {
-						if (err?.response?.status === 401) return { data: { locked: true } };
-						return null;
-					})
-					.finally(() => setSubmitting(false))
-			)?.data ?? null;
+		try {
+			const res = await request("/urls/geturl", { slug, password: values.password });
+			if (res.status === 200) return window.location.assign(res.url);
+			if (res.status === 400) return form.setFieldError("password", "Incorrect password");
+			if (res.status === 404) return window.location.assign("/404");
+		} catch (e) {
+			console.log(e);
+			window.location.assign("/500");
+		}
 
-		if (!res || res.locked) return form.setFieldError("password", "Incorrect password");
-		else window.location.assign(res.url);
+		setSubmitting(false);
 	};
 
 	return (
@@ -74,7 +67,7 @@ export default function Redirect({ slug }: { slug: string }) {
 						>
 							<Center>
 								<IconLock size={"15px"} /> <Space w={5} />
-								{env.DISPLAY_URL + "/" + slug}
+								{process.env.NEXT_PUBLIC_BASE_URL.split("//")[1] + "/" + slug}
 							</Center>
 						</Chip>
 					</Center>
