@@ -146,6 +146,7 @@ const Home: NextPage = () => {
 							withAsterisk={true}
 							{...form.getInputProps("url")}
 							disabled={url !== null}
+							autoComplete="off"
 						/>
 						<Space h="md" />
 						<PasswordInput
@@ -155,6 +156,7 @@ const Home: NextPage = () => {
 							{...form.getInputProps("password")}
 							disabled={url !== null}
 							{...(url != null ? { visible: false } : {})}
+							autoComplete="off"
 						/>
 						<Space h="md" />
 						<TextInput
@@ -170,6 +172,7 @@ const Home: NextPage = () => {
 							}
 							{...form.getInputProps("slug")}
 							disabled={url !== null /*true*/}
+							autoComplete="off"
 						/>
 						<Space h="md" />
 						<Center>

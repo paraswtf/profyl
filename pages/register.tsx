@@ -145,7 +145,7 @@ const Register: NextPage = () => {
 								<Space h="md" />
 								<PasswordInput
 									placeholder="Confirm your password"
-									autoComplete="password"
+									autoComplete="confirm-password"
 									id="your-password"
 									icon={<IconLockAccess />}
 									{...form.getInputProps("confirmPassword")}
