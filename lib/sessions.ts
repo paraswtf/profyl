@@ -1,7 +1,6 @@
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import { Types } from "mongoose";
-import env from "./env";
 import { MFA } from "./models/MFA";
 import { Session } from "./models/Session";
 import connect from "./mongoose";
@@ -10,7 +9,7 @@ import { generateCode } from "./uniqueID";
 export async function generateSession(userID: Types.ObjectId, mfaEnabled?: boolean, emailVerified?: boolean, ip?: string, userAgent?: string): Promise<{ token: string } & ({ code?: undefined; verificationToken?: undefined } | { code: string; verificationToken: string })> {
 	await connect();
 	const sessionID = new Types.ObjectId();
-	const token = jwt.sign({ userID, sessionID }, env.JWT_SECRET, { expiresIn: "7d" });
+	const token = jwt.sign({ userID, sessionID }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
 	const location = ip ? await axios.get(`https://geolocation-db.com/json/${ip}`).catch(() => {}) : undefined;
 
@@ -34,7 +33,7 @@ export async function generateSession(userID: Types.ObjectId, mfaEnabled?: boole
 	});
 
 	if (mfaEnabled || !emailVerified) {
-		const verificationToken = jwt.sign({ sessionID: session.id }, env.JWT_SECRET, { expiresIn: "5m" });
+		const verificationToken = jwt.sign({ sessionID: session.id }, process.env.JWT_SECRET, { expiresIn: "5m" });
 		const { code } = await MFA.create({
 			sessionID: session._id,
 			code: generateCode(),
