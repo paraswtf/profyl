@@ -67,7 +67,7 @@ export default function Redirect({ slug }: { slug: string }) {
 						>
 							<Center>
 								<IconLock size={"15px"} /> <Space w={5} />
-								{`https://${process.env.HOSTNAME + "/" + slug}`}
+								{`https://${process.env.NEXT_PUBLIC_HOSTNAME + "/" + slug}`}
 							</Center>
 						</Chip>
 					</Center>
