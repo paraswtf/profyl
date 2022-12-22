@@ -176,7 +176,7 @@ const Home: NextPage = () => {
 						<Center>
 							{url ? (
 								<CopyButton
-									value={"prf.ink/" + url.slug}
+									value={process.env.NEXT_PUBLIC_HOSTNAME + "/" + url.slug}
 									radius="xl"
 									w="100%"
 								/>
@@ -203,7 +203,7 @@ const Home: NextPage = () => {
 
 							<Center>
 								<Clipboard
-									data-clipboard-text={"prf.ink/" + url.slug}
+									data-clipboard-text={process.env.NEXT_PUBLIC_HOSTNAME + "/" + url.slug}
 									button-title="Click to copy"
 									style={{ cursor: "pointer", overflow: "hidden", background: "none", border: "none", padding: 0, margin: 0 }}
 								>
@@ -214,7 +214,7 @@ const Home: NextPage = () => {
 										>
 											<Center>
 												<IconLink size={"15px"} /> <Space w={5} />
-												{"prf.ink/" + url.slug}
+												{process.env.NEXT_PUBLIC_HOSTNAME + "/" + url.slug}
 											</Center>
 										</Chip>
 									</Center>
