@@ -176,7 +176,7 @@ const Home: NextPage = () => {
 						<Center>
 							{url ? (
 								<CopyButton
-									value={"prf.ink/" + url.slug}
+									value={process.env.VERCEL_URL + "/" + url.slug}
 									radius="xl"
 									w="100%"
 								/>
@@ -203,7 +203,7 @@ const Home: NextPage = () => {
 
 							<Center>
 								<Clipboard
-									data-clipboard-text={"prf.ink/" + url.slug}
+									data-clipboard-text={process.env.VERCEL_URL + "/" + url.slug}
 									button-title="Click to copy"
 									style={{ cursor: "pointer", overflow: "hidden", background: "none", border: "none", padding: 0, margin: 0 }}
 								>

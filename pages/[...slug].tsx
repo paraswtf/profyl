@@ -67,7 +67,7 @@ export default function Redirect({ slug }: { slug: string }) {
 						>
 							<Center>
 								<IconLock size={"15px"} /> <Space w={5} />
-								{process.env.NEXT_PUBLIC_BASE_URL.split("//")[1] + "/" + slug}
+								{`https://${process.env.VERCEL_URL + "/" + slug}`}
 							</Center>
 						</Chip>
 					</Center>
