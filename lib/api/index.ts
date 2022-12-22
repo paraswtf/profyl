@@ -8,7 +8,7 @@ export type Response<T extends keyof ApiPathList> = NextApiResponse<ApiPathList[
 export default async function request<T extends keyof ApiPathList>(path: T, body: ApiPathList[T]["request"]): Promise<ApiPathList[T]["response"]> {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api${path}`, {
+			const res = await fetch(`https://${process.env.HOSTNAME}/api${path}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"

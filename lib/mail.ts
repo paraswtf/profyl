@@ -8,7 +8,7 @@ export default async function sendVerificationMail(email: string, verificationCo
 			to: email,
 			from: process.env.MAIL_USERNAME,
 			subject: `Verify your account!`,
-			html: `Hello,<br> Please Click on the link or use the code <b>${verificationCode}</b> to verify your email.<br><a href="https://${process.env.VERCEL_URL}/verify?token=${verificationToken}">Click here to verify</a>`
+			html: `Hello,<br> Please Click on the link or use the code <b>${verificationCode}</b> to verify your email.<br><a href="https://${process.env.HOSTNAME}/verify?token=${verificationToken}">Click here to verify</a>`
 		})
 		.catch(console.error);
 }

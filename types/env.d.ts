@@ -3,10 +3,8 @@ export {};
 declare global {
 	namespace NodeJS {
 		interface ProcessEnv {
-			//Vercel deployment url (https://example.vercel.app)
-			VERCEL_URL: string;
-			//Environment (preview | development | production)
-			VERCEL_ENV: "preview" | "development" | "production";
+			//deployment url (https://example.vercel.app)
+			HOSTNAME: string;
 			//Uri to mongodb database (mongodb://localhost:27017/database)
 			MONGODB_URI: string;
 			//Secret for jwt (any string, should not be changed in production)
