@@ -10,6 +10,7 @@ import Head from "next/head";
 import Heart from "../../components/Heart";
 import request, { ApiUrlsGenerateResponse } from "../../lib/api";
 import { generateSlug } from "../../lib/uniqueID";
+import Link from "next/link";
 
 const getSlugError = async (slug: string) => {
 	try {
@@ -133,7 +134,7 @@ const Home: NextPage = () => {
 						weight="bold"
 						align="center"
 					>
-						Ask someone a question
+						Ask smth using a link 👀
 					</Text>
 					<Space h="sm" />
 
@@ -197,6 +198,25 @@ const Home: NextPage = () => {
 							)}
 						</Center>
 					</form>
+					<Space h="md" />
+					<Text
+						c="primary"
+						size="sm"
+						align="center"
+						w="100%"
+					>
+						{"Here's an example "}
+						<Link href="https://c.paras.codes/profyl/bot">
+							<Text
+								span
+								c="blue.5"
+								inherit
+								underline
+							>
+								view
+							</Text>
+						</Link>
+					</Text>
 					{url ? (
 						<div>
 							<Space h="md" />
