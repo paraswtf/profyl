@@ -40,7 +40,7 @@ export default async function generate(req: Request<"/ask/notifications">, res: 
 					userID: user._id
 				}).then((d) => {
 					if (!d) return res.status(200).json({ status: 200, success: true, notifications: [] });
-					res.status(200).json({ status: 200, success: true, notifications: d.notifications });
+					res.status(200).json({ status: 200, success: true, notifications: d.notifications.map((d) => ({ message: d.message })) });
 				});
 			case "POST":
 				const d = validate(req.body as { slug: string; message: string }, postschema);
@@ -75,13 +75,14 @@ export default async function generate(req: Request<"/ask/notifications">, res: 
 						userID
 					},
 					{
-						notifications: {
-							$push: {
+						$push: {
+							notifications: {
 								key,
 								message: d.message
 							}
 						}
-					}
+					},
+					{ upsert: true }
 				).then(() => res.status(200).json({ status: 200, success: true, updateKey: key }));
 			case "PATCH":
 				const data = validate(req.body as { key: string; updateKey: string; message: string }, patchschema);

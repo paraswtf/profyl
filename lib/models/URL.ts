@@ -1,7 +1,7 @@
 import { Schema, model, models, Model } from "mongoose";
 
 const URLSchema = new Schema({
-	userId: {
+	userID: {
 		type: Schema.Types.ObjectId,
 		ref: "User",
 		default: null
