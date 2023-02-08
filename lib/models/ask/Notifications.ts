@@ -6,11 +6,6 @@ const NotificationsSchema = new Schema({
 		required: true,
 		ref: "User"
 	},
-	key: {
-		type: String,
-		required: true,
-		unique: true
-	},
 	notifications: {
 		type: Array,
 		of: {
