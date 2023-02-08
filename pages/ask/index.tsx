@@ -53,7 +53,7 @@ const Home: NextPage = () => {
 			slug: generateSlug()
 		},
 		validate: {
-			slug: (value) => (slugRegex.test(value) ? null : "Invalid slug"),
+			slug: (value) => (slugRegex.test(value) ? null : "Invalid slug") || (value.length > 0 ? null : "Custom URL is required for questions"),
 			question: (value) => (value.length > 0 ? null : "Question is required")
 		},
 		validateInputOnChange: true
@@ -88,7 +88,7 @@ const Home: NextPage = () => {
 
 		try {
 			const res = await request("/urls/generate", {
-				url: "https://c.paras.codes/profyl?data=" + url,
+				url: `https://c.paras.codes/profyl/${req.slug}?data=` + url,
 				slug: req.slug
 			});
 			if (res.status === 200) setUrl(res);

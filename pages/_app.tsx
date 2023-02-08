@@ -1,8 +1,11 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { MantineProvider } from "@mantine/core";
+import Navbar from "../components/Navbar";
+import { useState } from "react";
 
 function MyApp({ Component, pageProps }: AppProps) {
+	const [open, setOpen] = useState(false);
 	return (
 		<MantineProvider
 			withGlobalStyles
@@ -12,6 +15,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 				colorScheme: "dark"
 			}}
 		>
+			<Navbar
+				open={open}
+				setOpen={setOpen}
+			/>
 			<Component {...pageProps} />
 		</MantineProvider>
 	);

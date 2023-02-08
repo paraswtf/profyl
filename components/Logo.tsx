@@ -1,7 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Logo() {
+interface Props {
+	s?: number;
+}
+
+export default function Logo(props: Props = { s: 100 }) {
 	return (
 		<Link
 			href="/"
@@ -10,8 +14,8 @@ export default function Logo() {
 			<Image
 				src="/logo.svg"
 				alt="Logo"
-				width={100}
-				height={100}
+				width={props.s || 100}
+				height={props.s || 100}
 				loading="eager"
 				style={{ cursor: "pointer" }}
 			/>
