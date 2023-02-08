@@ -41,7 +41,7 @@ export default async function generate(req: Request<"/ask/notifications">, res: 
 						success: false,
 						status: 401,
 						name: "LOGIN_REQUIRED",
-						message: "You must be logged in to use custom slugs."
+						message: "You must be logged in to view notifications."
 					});
 
 				//Make sure the database is connected
