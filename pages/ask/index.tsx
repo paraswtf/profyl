@@ -175,7 +175,7 @@ const Home: NextPage = () => {
 						<Center>
 							{url ? (
 								<CopyButton
-									value={process.env.NEXT_PUBLIC_HOSTNAME + "/" + url.slug}
+									value={"https://c.paras.codes/profyl/" + url.slug}
 									radius="xl"
 									w="100%"
 								/>
