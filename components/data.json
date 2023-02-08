@@ -1,0 +1,22 @@
+{
+	"data": {
+		"links": [
+			{
+				"title": "Login",
+				"url": "/login"
+			},
+			{
+				"title": "Logout",
+				"url": "/logout"
+			},
+			{
+				"title": "Ask A Question 💕",
+				"url": "/ask"
+			},
+			{
+				"title": "View Ask Notifications",
+				"url": "/api/ask/notifications"
+			}
+		]
+	}
+}
