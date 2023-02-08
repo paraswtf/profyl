@@ -85,6 +85,10 @@ export interface ApiPathList {
 		request: ApiUsersValidateRequest;
 		response: ApiUsersValidateResponse | ApiUsersValidateErrorResponse | MethodNotAllowedError | InternalServerError;
 	};
+	"/ask/notifications": {
+		request: ApiAskNotificationsRequest;
+		response: ApiAskNotificationsResponse | ApiAskNotificationsErrorResponse | MethodNotAllowedError | InternalServerError;
+	};
 	"/ping": {
 		request: ApiPingRequest;
 		response: ApiPingResponse | ApiPingErrorResponse | MethodNotAllowedError | InternalServerError;
@@ -222,6 +226,34 @@ export interface ApiUsersValidateRequest {
 }
 export interface ApiUsersValidateResponse extends SuccessResponse {}
 export type ApiUsersValidateErrorResponse = ValidationError<ApiUsersValidateRequest>;
+
+// /api/ask/notifications
+export type ApiAskNotificationsRequest =
+	| {
+			key: string;
+	  }
+	| { key: string; updateKey: string };
+export type ApiAskNotificationsResponse = SuccessResponse &
+	(
+		| {
+				notifications: {
+					key: string;
+					message: string;
+				}[];
+		  }
+		| {
+				updateKey: string;
+		  }
+		| {}
+	);
+export type ApiAskNotificationsErrorResponse = ErrorResponse &
+	(
+		| {
+				status: 401;
+				name: "LOGIN_REQUIRED";
+		  }
+		| ValidationError<ApiAskNotificationsRequest>
+	);
 
 // /api/ping
 export interface ApiPingRequest {}
