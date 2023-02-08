@@ -3,8 +3,25 @@ import Image from "next/image";
 import Head from "next/head";
 import { IconCircleCheck } from "@tabler/icons";
 import request from "../lib/api";
+import { useState } from "react";
+import { useEffectOnce } from "react-use";
 
 export default function verify() {
+	const [error, setError] = useState<boolean | null>(null);
+
+	useEffectOnce(() => {
+		const verify = async () => {
+			try {
+				const res = await request("/users/logout", {});
+				if (res.success) setError(false);
+				else setError(true);
+			} catch (err) {
+				setError(true);
+			}
+		};
+		verify();
+	});
+
 	return (
 		<div>
 			<Head>
@@ -48,7 +65,7 @@ export default function verify() {
 							weight="bold"
 							align="center"
 						>
-							{"Logged out successfully!"}
+							{error === null ? "Logging you out..." : error ? "Could not log you out!" : "Logged out successfully!"}
 						</Text>
 						<Space h="md" />
 					</Center>
