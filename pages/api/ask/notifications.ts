@@ -3,17 +3,17 @@ import { getCookie } from "../../../lib/cookies";
 import connect from "../../../lib/mongoose";
 import validate from "../../../lib/requestValidation/validate";
 import { generateKey } from "../../../lib/uniqueID";
-import { internalError, notAllowed, Request, Response } from "../../../lib/api";
+import request, { internalError, notAllowed, Request, Response } from "../../../lib/api";
 import { getDatabaseUser } from "../../../lib/utils";
 import { Notifications } from "../../../lib/models/ask/Notifications";
+import { URL } from "../../../lib/models/URL";
 
 const postschema = object({
-	key: string().required(),
+	slug: string().required(),
 	message: string().required()
 });
 
 const patchschema = object({
-	key: string().required(),
 	updateKey: string().required(),
 	message: string().required()
 });
@@ -43,7 +43,7 @@ export default async function generate(req: Request<"/ask/notifications">, res: 
 					res.status(200).json({ status: 200, success: true, notifications: d.notifications });
 				});
 			case "POST":
-				const d = validate(req.body as { key: string; message: string }, postschema);
+				const d = validate(req.body as { slug: string; message: string }, postschema);
 				if (d.error)
 					return res.status(400).json({
 						success: false,
@@ -55,10 +55,24 @@ export default async function generate(req: Request<"/ask/notifications">, res: 
 
 				//Make sure the database is connected
 				await connect();
+
+				//Find the user
+				const userID = await URL.findOne({ slug: d.slug }).then((d) => d?.userID);
+				if (!userID)
+					return res.status(400).json({
+						success: false,
+						status: 400,
+						name: "INVALID_DATA",
+						message: "Invalid slug.",
+						fields: {
+							slug: d.slug
+						}
+					});
+
 				const key = generateKey();
 				return Notifications.updateOne(
 					{
-						key: d.key
+						userID
 					},
 					{
 						notifications: {
@@ -68,19 +82,7 @@ export default async function generate(req: Request<"/ask/notifications">, res: 
 							}
 						}
 					}
-				).then((doc) => {
-					if (!doc.modifiedCount)
-						return res.status(400).json({
-							success: false,
-							status: 400,
-							name: "INVALID_DATA",
-							message: "The key is invalid.",
-							fields: {
-								key: d.key
-							}
-						});
-					res.status(200).json({ status: 200, success: true, updateKey: key });
-				});
+				).then(() => res.status(200).json({ status: 200, success: true, updateKey: key }));
 			case "PATCH":
 				const data = validate(req.body as { key: string; updateKey: string; message: string }, patchschema);
 				if (data.error)
@@ -96,7 +98,6 @@ export default async function generate(req: Request<"/ask/notifications">, res: 
 				await connect();
 				return Notifications.updateOne(
 					{
-						"key": data.key,
 						"notifications.key": data.updateKey
 					},
 					{
@@ -108,9 +109,8 @@ export default async function generate(req: Request<"/ask/notifications">, res: 
 							success: false,
 							status: 400,
 							name: "INVALID_DATA",
-							message: "Either the key or updateKey is invalid.",
+							message: "The updateKey is invalid.",
 							fields: {
-								key: data.key,
 								updateKey: data.updateKey
 							}
 						});

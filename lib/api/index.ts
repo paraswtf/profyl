@@ -229,21 +229,30 @@ export type ApiUsersValidateErrorResponse = ValidationError<ApiUsersValidateRequ
 
 // /api/ask/notifications
 export type ApiAskNotificationsRequest =
+	//For post requests
 	| {
-			key: string;
+			slug: string;
+			message: string;
 	  }
-	| { key: string; updateKey: string };
+	//For patch requests
+	| {
+			updateKey: string;
+			message: string;
+	  };
+
 export type ApiAskNotificationsResponse = SuccessResponse &
-	(
-		| {
+	//For get requests
+	(| {
 				notifications: {
 					key: string;
 					message: string;
 				}[];
 		  }
+		//For post requests
 		| {
 				updateKey: string;
 		  }
+		//For patch requests
 		| {}
 	);
 export type ApiAskNotificationsErrorResponse = ErrorResponse &
