@@ -21,11 +21,11 @@ const useStyles = createStyles((theme, _params, getRef) => ({
 		width: "94%",
 		height: "100px",
 		background: `#121212`,
-		boxShadow: `0px 0px 50px #001632, 0px 0px 5px #000000`,
+		boxShadow: `0px 0px 50px #001112, 0px 0px 2px #000000`,
 		stroke: "white",
 		strokeWidth: "2px",
 		borderRadius: "100px 100px 100px 100px",
-		zIndex: 1,
+		zIndex: 99,
 		[`@media (max-width: 950px)`]: {
 			[`&`]: {
 				padding: "0 60px",
