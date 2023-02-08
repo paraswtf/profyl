@@ -139,7 +139,7 @@ const Home: NextPage = () => {
 
 					<form onSubmit={form.onSubmit(handleSubmit)}>
 						<TextInput
-							placeholder="Enter name"
+							placeholder="Enter a name to display"
 							icon={<IconHeart />}
 							withAsterisk={true}
 							{...form.getInputProps("name")}
