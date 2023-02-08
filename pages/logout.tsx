@@ -5,8 +5,9 @@ import { IconCircleCheck } from "@tabler/icons";
 import request from "../lib/api";
 import { useState } from "react";
 import { useEffectOnce } from "react-use";
+import { NextPage } from "next";
 
-export default function verify() {
+const Logout: NextPage = () => {
 	const [error, setError] = useState<boolean | null>(null);
 
 	useEffectOnce(() => {
@@ -73,7 +74,7 @@ export default function verify() {
 			</Center>
 		</div>
 	);
-}
+};
 
 export async function getServerSideProps(): Promise<{ props: { success: true } }> {
 	try {
@@ -83,3 +84,5 @@ export async function getServerSideProps(): Promise<{ props: { success: true } }
 	}
 	return { props: { success: true } };
 }
+
+export default Logout;
