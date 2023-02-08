@@ -103,12 +103,10 @@ export default function Redirect({ slug }: { slug: string }) {
 }
 
 export const getServerSideProps = async (context: { params: { slug: string[] } }) => {
-	console.log(context.params);
 	try {
 		const slug = context.params.slug.join("/");
 
 		const res = await request("/urls/geturl", { slug });
-		console.log(res);
 
 		if (res.status === 404) return { redirect: { destination: "/404" } };
 
