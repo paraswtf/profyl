@@ -12,7 +12,7 @@ import { Request, Response, notAllowed, internalError } from "../../../lib/api";
 import { obfuscateMail } from "../../../lib/utils";
 
 const schema = object({
-	username: string().required().min(3).max(24).matches(usernameRegex),
+	username: string().required().min(3).max(24).matches(usernameRegex, "Username can only contain letters, numbers, underscores and periods. It cannot start or end with a period or underscore."),
 	password: string().required().min(8),
 	email: string().lowercase().required().email(),
 	emailSubscription: boolean().default(false),

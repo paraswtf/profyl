@@ -3,13 +3,10 @@ import validateSchema from "../../../lib/requestValidation/validate";
 import { User } from "../../../lib/models/User";
 import connect from "../../../lib/mongoose";
 import { Request, Response, internalError, notAllowed, ApiUsersValidateRequest, ValidationError } from "../../../lib/api";
+import { usernameRegex } from "../../../lib/utils/common";
 
 const schema = object({
-	username: string()
-		.required()
-		.min(3)
-		.max(24)
-		.matches(/(?!^[\.\_])(?![\.\_]$)(?!.*[\.\_]{2,})^[a-zA-Z0-9\.\_]+$/),
+	username: string().required().min(3).max(24).matches(usernameRegex, "Username can only contain letters, numbers, underscores and periods. It cannot start or end with a period or underscore."),
 	email: string().lowercase().required().email()
 }).noUnknown();
 
