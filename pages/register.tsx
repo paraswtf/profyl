@@ -23,7 +23,7 @@ const Register: NextPage = () => {
 			email: "",
 			password: "",
 			confirmPassword: "",
-			mfaEnabled: true,
+			mfaEnabled: false,
 			emailSubscription: true,
 			tos: false
 		},
