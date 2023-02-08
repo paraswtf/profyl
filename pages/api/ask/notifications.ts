@@ -7,6 +7,7 @@ import request, { internalError, notAllowed, Request, Response } from "../../../
 import { getDatabaseUser } from "../../../lib/utils";
 import { Notifications } from "../../../lib/models/ask/Notifications";
 import { URL } from "../../../lib/models/URL";
+import NextCors from "nextjs-cors";
 
 const postschema = object({
 	slug: string().required(),
@@ -19,6 +20,15 @@ const patchschema = object({
 });
 
 export default async function generate(req: Request<"/ask/notifications">, res: Response<"/ask/notifications">) {
+	// Run the cors middleware
+	// nextjs-cors uses the cors package, so we invite you to check the documentation https://github.com/expressjs/cors
+	await NextCors(req, res, {
+		// Options
+		methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+		origin: "*",
+		optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+	});
+
 	try {
 		switch (req.method) {
 			case "GET":
