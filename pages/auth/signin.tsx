@@ -7,26 +7,26 @@ import {
     Button,
     Divider,
     createStyles,
-} from '@mantine/core'
-import { useForm, yupResolver } from '@mantine/form'
-import { IconMailFast, IconBrandGoogle, IconBrandDiscord } from '@tabler/icons'
-import { useState } from 'react'
-import Head from 'next/head'
-import Logo from '../../components/Logo'
-import { getProviders, getSession, signIn } from 'next-auth/react'
-import { object, string } from 'yup'
-import { getServerSession } from 'next-auth'
+} from '@mantine/core';
+import { useForm, yupResolver } from '@mantine/form';
+import { IconMailFast, IconBrandGoogle, IconBrandDiscord } from '@tabler/icons';
+import { useState } from 'react';
+import Head from 'next/head';
+import Logo from '../../components/Logo';
+import { getProviders, getSession, signIn } from 'next-auth/react';
+import { object, string } from 'yup';
+import { getServerSession } from 'next-auth';
 const icons = {
     google: <IconBrandGoogle size={20} strokeWidth={4} />,
     discord: <IconBrandDiscord size={20} />,
-}
+};
 
 const formSchema = object({
     username: string().email('invalid email').required('email is required'),
-})
+});
 
 interface Props {
-    providers: { name: string; id: string }[]
+    providers: { name: string; id: string }[];
 }
 
 const useStyles = createStyles({
@@ -40,11 +40,11 @@ const useStyles = createStyles({
         flexDirection: 'column',
         gap: '10px',
     },
-})
+});
 
 function SignIn({ providers }: Props) {
     //States for verification input
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
     const form = useForm({
         initialValues: {
             username: '',
@@ -52,18 +52,18 @@ function SignIn({ providers }: Props) {
         validate: yupResolver(formSchema),
         validateInputOnChange: false,
         validateInputOnBlur: false,
-    })
+    });
 
     const handleSubmit = async (values: (typeof form)['values']) => {
         //Set loading state
-        setLoading(true)
+        setLoading(true);
         await signIn('email', {
             email: values.username,
             callbackUrl: 'http://localhost:3001/ask',
-        })
-    }
+        });
+    };
 
-    const { classes } = useStyles()
+    const { classes } = useStyles();
 
     return (
         <div>
@@ -87,7 +87,7 @@ function SignIn({ providers }: Props) {
                         </Text>
                         <Space h="sm" />
                         <div className={classes.providers}>
-                            {providers.map((provider) => (
+                            {providers.map((provider, index) => (
                                 <Button
                                     radius="md"
                                     w="100%"
@@ -104,6 +104,7 @@ function SignIn({ providers }: Props) {
                                     //@ts-expect-error
                                     leftIcon={icons[provider.id] ?? null}
                                     h="50px"
+                                    key={index}
                                 >
                                     Sign in with {provider.name}
                                 </Button>
@@ -147,20 +148,20 @@ function SignIn({ providers }: Props) {
                 </Card>
             </Center>
         </div>
-    )
+    );
 }
 
 export async function getServerSideProps({ req, query }: any) {
-    const session = await getSession({ req })
+    const session = await getSession({ req });
     if (session)
         return {
             redirect: {
                 destination: query.callbackUrl ?? '/',
                 permanent: false,
             },
-        }
+        };
 
-    const providers = await getProviders()
+    const providers = await getProviders();
     return {
         props: {
             providers: providers
@@ -169,7 +170,7 @@ export async function getServerSideProps({ req, query }: any) {
                   )
                 : [],
         },
-    }
+    };
 }
 
-export default SignIn
+export default SignIn;

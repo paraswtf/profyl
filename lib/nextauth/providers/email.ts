@@ -1,10 +1,8 @@
-import type { CommonProviderOptions } from 'next-auth/providers'
-import type { Awaitable } from 'next-auth'
-import type { Theme } from 'next-auth/core/types'
-import mail from '@sendgrid/mail'
-mail.setApiKey(process.env.MAIL_API_KEY)
+import type { Theme } from 'next-auth/core/types';
+import mail from '@sendgrid/mail';
+mail.setApiKey(process.env.MAIL_API_KEY);
 
-export default mail
+export default mail;
 
 /**
  * Email HTML body
@@ -15,14 +13,12 @@ export default mail
  * @note We don't add the email address to avoid needing to escape it, if you do, remember to sanitize it!
  */
 export function html(params: { url: string; host: string; theme: Theme }) {
-    const { url, host, theme } = params
+    const { url, host, theme } = params;
 
-    const escapedHost = host.replace(/\./g, '&#8203;.')
+    const escapedHost = host.replace(/\./g, '&#8203;.');
 
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    const brandColor = theme.brandColor || '#346df1'
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    const buttonText = theme.buttonText || '#fff'
+    const brandColor = theme.brandColor || '#346df1';
+    const buttonText = theme.buttonText || '#fff';
 
     const color = {
         background: '#f9f9f9',
@@ -31,7 +27,7 @@ export function html(params: { url: string; host: string; theme: Theme }) {
         buttonBackground: brandColor,
         buttonBorder: brandColor,
         buttonText,
-    }
+    };
 
     return `
 <body style="background: ${color.background};">
@@ -63,10 +59,10 @@ export function html(params: { url: string; host: string; theme: Theme }) {
     </tr>
   </table>
 </body>
-`
+`;
 }
 
 /** Email Text body (fallback for email clients that don't render HTML, e.g. feature phones) */
 export function text({ url, host }: { url: string; host: string }) {
-    return `Sign in to ${host}\n${url}\n\n`
+    return `Sign in to ${host}\n${url}\n\n`;
 }
