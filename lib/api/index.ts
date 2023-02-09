@@ -17,7 +17,7 @@ export default async function request<T extends keyof ApiPathList>(
     return new Promise(async (resolve, reject) => {
         try {
             const res = await fetch(
-                `http://${process.env.NEXT_PUBLIC_HOSTNAME}/api${path}`,
+                `https://${process.env.NEXT_PUBLIC_HOSTNAME}/api${path}`,
                 {
                     method: 'POST',
                     headers: {
