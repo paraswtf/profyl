@@ -34,7 +34,7 @@ export const authOptions: NextAuthOptions = {
             id: 'email',
             name: 'Email',
             from: process.env.MAIL_USERNAME,
-            secret: 'khgnojkhgjg',
+            secret: process.env.MAIL_SECRET,
             async sendVerificationRequest(params) {
                 const { identifier, url, provider, theme } = params;
                 const { host } = new URL(url);
