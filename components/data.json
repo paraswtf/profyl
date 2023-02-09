@@ -1,26 +1,18 @@
 {
-	"data": {
-		"links": [
-			{
-				"title": "Login",
-				"url": "/login"
-			},
-			{
-				"title": "Logout",
-				"url": "/logout"
-			},
-			{
-				"title": "Shorten a URL",
-				"url": "/"
-			},
-			{
-				"title": "Ask A Question 💕",
-				"url": "/ask"
-			},
-			{
-				"title": "View Ask Notifications",
-				"url": "/api/ask/notifications"
-			}
-		]
-	}
+    "data": {
+        "links": [
+            {
+                "title": "Shorten a URL",
+                "url": "/"
+            },
+            {
+                "title": "Ask A Question 💕",
+                "url": "/ask"
+            },
+            {
+                "title": "View Ask Notifications",
+                "url": "/api/ask/notifications"
+            }
+        ]
+    }
 }
