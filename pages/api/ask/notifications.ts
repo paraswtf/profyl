@@ -1,136 +1,172 @@
-import { object, string } from "yup";
-import { getCookie } from "../../../lib/cookies";
-import connect from "../../../lib/mongoose";
-import validate from "../../../lib/requestValidation/validate";
-import { generateKey } from "../../../lib/uniqueID";
-import request, { internalError, notAllowed, Request, Response } from "../../../lib/api";
-import { getDatabaseUser } from "../../../lib/utils";
-import { Notifications } from "../../../lib/models/ask/Notifications";
-import { URL } from "../../../lib/models/URL";
-import NextCors from "nextjs-cors";
+import { object, string } from 'yup';
+import validate from '../../../lib/requestValidation/validate';
+import { generateKey } from '../../../lib/uniqueID';
+import { internalError, notAllowed, Request, Response } from '../../../lib/api';
+import NextCors from 'nextjs-cors';
+import { getSession } from 'next-auth/react';
+import prisma from '../../../lib/prisma/client';
 
 const postschema = object({
-	slug: string().required(),
-	message: string().required()
+    slug: string().required(),
+    message: string().required(),
 });
 
 const patchschema = object({
-	updateKey: string().required(),
-	message: string().required()
+    updateKey: string().required(),
+    message: string().required(),
 });
 
-export default async function generate(req: Request<"/ask/notifications">, res: Response<"/ask/notifications">) {
-	// Run the cors middleware
-	// nextjs-cors uses the cors package, so we invite you to check the documentation https://github.com/expressjs/cors
-	await NextCors(req, res, {
-		// Options
-		methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-		origin: "*",
-		optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-	});
+export default async function generate(
+    req: Request<'/ask/notifications'>,
+    res: Response<'/ask/notifications'>
+) {
+    // Run the cors middleware
+    // nextjs-cors uses the cors package, so we invite you to check the documentation https://github.com/expressjs/cors
+    await NextCors(req, res, {
+        // Options
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+        origin: '*',
+        optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    });
 
-	try {
-		switch (req.method) {
-			case "GET":
-				const token = getCookie(req, "session");
-				const user = token ? await getDatabaseUser(token) : null;
+    try {
+        switch (req.method) {
+            case 'GET':
+                const session = await getSession({ req });
 
-				//Check if user is logged in if they want to view notifications
-				if (!token || !user)
-					return res.status(400).json({
-						success: false,
-						status: 401,
-						name: "LOGIN_REQUIRED",
-						message: "You must be logged in to view notifications."
-					});
+                //Check if user is logged in if they want to view notifications
+                if (!session?.user)
+                    return res.status(400).json({
+                        success: false,
+                        status: 401,
+                        name: 'LOGIN_REQUIRED',
+                        message: 'You must be logged in to view notifications.',
+                    });
 
-				//Make sure the database is connected
-				await connect();
-				return Notifications.findOne({
-					userID: user._id
-				}).then((d) => {
-					if (!d) return res.status(200).json({ status: 200, success: true, notifications: [] });
-					res.status(200).json({ status: 200, success: true, notifications: d.notifications.map((d) => ({ message: d.message })) });
-				});
-			case "POST":
-				const d = validate(req.body as { slug: string; message: string }, postschema);
-				if (d.error)
-					return res.status(400).json({
-						success: false,
-						status: 400,
-						name: "INVALID_DATA",
-						message: "Invalid json in request.",
-						fields: d
-					});
+                //Query the database for the user's notifications and return them
+                return prisma.notification
+                    .findMany({
+                        where: {
+                            user: {
+                                email: session.user.email,
+                            },
+                        },
+                    })
+                    .then((d) => {
+                        if (!d)
+                            return res.status(200).json({
+                                status: 200,
+                                success: true,
+                                notifications: [],
+                            });
+                        else
+                            res.status(200).json({
+                                status: 200,
+                                success: true,
+                                notifications: d.map((d) => ({
+                                    message: d.message,
+                                })),
+                            });
+                    });
+            case 'POST':
+                //Handle validation
+                const d = validate(
+                    req.body as { slug: string; message: string },
+                    postschema
+                );
+                if (d.error)
+                    return res.status(400).json({
+                        success: false,
+                        status: 400,
+                        name: 'INVALID_DATA',
+                        message: 'Invalid json in request.',
+                        fields: d,
+                    });
 
-				//Make sure the database is connected
-				await connect();
+                //Check if the slug exists and get the user's ID
+                const userId = await prisma.url
+                    .findUnique({
+                        where: {
+                            slug: d.slug,
+                        },
+                    })
+                    .then((d) => d?.userId);
 
-				//Find the user
-				const userID = await URL.findOne({ slug: d.slug }).then((d) => d?.userID);
-				if (!userID)
-					return res.status(400).json({
-						success: false,
-						status: 400,
-						name: "INVALID_DATA",
-						message: "Invalid slug.",
-						fields: {
-							slug: d.slug
-						}
-					});
+                //If the slug doesn't exist, return an error
+                if (!userId)
+                    return res.status(400).json({
+                        success: false,
+                        status: 400,
+                        name: 'INVALID_DATA',
+                        message: 'Invalid slug.',
+                        fields: {
+                            slug: d.slug,
+                        },
+                    });
 
-				const key = generateKey();
-				return Notifications.updateOne(
-					{
-						userID
-					},
-					{
-						$push: {
-							notifications: {
-								key,
-								message: d.message
-							}
-						}
-					},
-					{ upsert: true }
-				).then(() => res.status(200).json({ status: 200, success: true, updateKey: key }));
-			case "PATCH":
-				const data = validate(req.body as { key: string; updateKey: string; message: string }, patchschema);
-				if (data.error)
-					return res.status(400).json({
-						success: false,
-						status: 400,
-						name: "INVALID_DATA",
-						message: "Invalid json in request.",
-						fields: data
-					});
+                //Post the notification to the database
+                const key = generateKey();
+                return prisma.notification
+                    .create({
+                        data: {
+                            message: d.message,
+                            key,
+                            type: 'NOTIFICATION',
+                            userId,
+                        },
+                    })
+                    .then(() =>
+                        res.status(200).json({
+                            status: 200,
+                            success: true,
+                            updateKey: key,
+                        })
+                    );
+            case 'PATCH':
+                //Handle validation
+                const data = validate(
+                    req.body as {
+                        key: string;
+                        updateKey: string;
+                        message: string;
+                    },
+                    patchschema
+                );
+                if (data.error)
+                    return res.status(400).json({
+                        success: false,
+                        status: 400,
+                        name: 'INVALID_DATA',
+                        message: 'Invalid json in request.',
+                        fields: data,
+                    });
 
-				//Make sure the database is connected
-				await connect();
-				return Notifications.updateOne(
-					{
-						"notifications.key": data.updateKey
-					},
-					{
-						"notifications.$.message": data.message
-					}
-				).then((d) => {
-					if (!d.modifiedCount)
-						return res.status(400).json({
-							success: false,
-							status: 400,
-							name: "INVALID_DATA",
-							message: "The updateKey is invalid.",
-							fields: {
-								updateKey: data.updateKey
-							}
-						});
-					res.status(200).json({ status: 200, success: true });
-				});
-			default:
-				return notAllowed(req, res);
-		}
-	} catch (err) {
-		internalError(err, res);
-	}
+                return prisma.notification
+                    .update({
+                        where: {
+                            key: data.updateKey,
+                        },
+                        data: {
+                            message: data.message,
+                        },
+                    })
+                    .then((d) => {
+                        if (!d)
+                            return res.status(400).json({
+                                success: false,
+                                status: 400,
+                                name: 'INVALID_DATA',
+                                message: 'The updateKey is invalid.',
+                                fields: {
+                                    updateKey: data.updateKey,
+                                },
+                            });
+                        res.status(200).json({ status: 200, success: true });
+                    });
+            default:
+                return notAllowed(req, res);
+        }
+    } catch (err) {
+        internalError(err, res);
+    }
 }
