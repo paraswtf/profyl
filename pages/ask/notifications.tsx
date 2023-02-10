@@ -50,7 +50,7 @@ function renderNotifications(
 interface Props {}
 
 async function getNotifications() {
-    const notifications = await request('/ask/notifications', {}, 'GET');
+    const notifications = await request('/ask/notifications', {});
     if (notifications.status === 200)
         return notifications as any as { notifications: { message: string }[] };
     else return { notifications: null };
