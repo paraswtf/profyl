@@ -8,27 +8,22 @@ export type Request<T extends keyof ApiPathList> = Omit<
 export type Response<T extends keyof ApiPathList> = NextApiResponse<
     ApiPathList[T]['response']
 >;
-export type RequestMethod = keyof ApiPathList[keyof ApiPathList]['response'];
 
 //Method to handle all api requests
-export default async function request<
-    T extends keyof ApiPathList,
-    M extends RequestMethod
->(
+export default async function request<T extends keyof ApiPathList>(
     path: T,
-    body: ApiPathList[T]['request'],
-    method?: M
-): Promise<ApiPathList[T]['response'][M]> {
+    body: ApiPathList[T]['request']
+): Promise<ApiPathList[T]['response']> {
     return new Promise(async (resolve, reject) => {
         try {
             const res = await fetch(
                 `http://${process.env.NEXT_PUBLIC_HOSTNAME}/api${path}`,
                 {
-                    method: method ?? 'POST',
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: method === 'GET' ? undefined : JSON.stringify(body),
+                    body: JSON.stringify(body),
                 }
             );
             resolve(await res.json());
@@ -70,51 +65,43 @@ export function internalError(err: any, res: NextApiResponse) {
 export interface ApiPathList {
     '/urls/generate': {
         request: ApiUrlsGenerateRequest;
-        response: {
-            GET: MethodNotAllowedError | InternalServerError;
-            POST:
-                | ApiUrlsGenerateResponse
-                | ApiUrlsGenerateErrorResponse
-                | InternalServerError;
-        };
+        response:
+            | ApiUrlsGenerateResponse
+            | ApiUrlsGenerateErrorResponse
+            | MethodNotAllowedError
+            | InternalServerError;
     };
     '/urls/geturl': {
         request: ApiUrlsGetUrlRequest;
-        response: {
-            GET: MethodNotAllowedError | InternalServerError;
-            POST:
-                | ApiUrlsGetUrlResponse
-                | ApiUrlsGetUrlErrorResponse
-                | InternalServerError;
-        };
+        response:
+            | ApiUrlsGetUrlResponse
+            | ApiUrlsGetUrlErrorResponse
+            | MethodNotAllowedError
+            | InternalServerError;
     };
     '/urls/validate': {
         request: ApiUrlsValidateRequest;
-        response: {
-            GET: MethodNotAllowedError | InternalServerError;
-            POST:
-                | ApiUrlsValidateResponse
-                | ApiUrlsValidateErrorResponse
-                | InternalServerError;
-        };
+        response:
+            | ApiUrlsValidateResponse
+            | ApiUrlsValidateErrorResponse
+            | MethodNotAllowedError
+            | InternalServerError;
     };
     '/ask/notifications': {
         request: ApiAskNotificationsRequest;
-        response: {
-            GET:
-                | ApiAskNotificationsPostResponse
-                | ApiAskNotificationsErrorResponse
-                | InternalServerError;
-            POST: ApiAskNotificationsPostResponse | InternalServerError;
-            PATCH: ApiAskNotificationsPatchResponse | InternalServerError;
-        };
+        response:
+            | ApiAskNotificationsResponse
+            | ApiAskNotificationsErrorResponse
+            | MethodNotAllowedError
+            | InternalServerError;
     };
     '/ping': {
         request: ApiPingRequest;
-        response: {
-            GET: ApiPingResponse | ApiPingErrorResponse | InternalServerError;
-            POST: ApiPingResponse | ApiPingErrorResponse | InternalServerError;
-        };
+        response:
+            | ApiPingResponse
+            | ApiPingErrorResponse
+            | MethodNotAllowedError
+            | InternalServerError;
     };
 }
 
@@ -198,15 +185,20 @@ export type ApiAskNotificationsRequest =
           message: string;
       };
 
-export type ApiAskNotificationsGetResponse = SuccessResponse & {
-    notifications: {
-        message: string;
-    }[];
-};
-export type ApiAskNotificationsPostResponse = SuccessResponse & {
-    updateKey: string;
-};
-export type ApiAskNotificationsPatchResponse = SuccessResponse & {};
+export type ApiAskNotificationsResponse = SuccessResponse &
+    //For get requests
+    (| {
+              notifications: {
+                  message: string;
+              }[];
+          }
+        //For post requests
+        | {
+              updateKey: string;
+          }
+        //For patch requests
+        | {}
+    );
 export type ApiAskNotificationsErrorResponse = ErrorResponse &
     (
         | {
