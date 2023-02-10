@@ -24,7 +24,7 @@ export default async function request<T extends keyof ApiPathList>(
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(body),
+                    body: method === 'GET' ? undefined : JSON.stringify(body),
                 }
             );
             resolve(await res.json());
