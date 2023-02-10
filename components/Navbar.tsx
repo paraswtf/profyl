@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { createStyles } from '@mantine/styles';
 import Link from './Link';
@@ -105,18 +106,16 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     },
 }));
 
-interface Props {
-    open: any;
-    setOpen: any;
-}
+interface Props {}
 
 function Navbar(props: Props) {
     const { classes } = useStyles();
     const {} = props;
     const theme = useMantineTheme();
+    const [open, setOpen] = useState(false);
 
     return (
-        <div className={classes.nav + (props.open ? ' open' : '')}>
+        <div className={classes.nav + (open ? ' open' : '')}>
             <div className={classes.navLogo}>
                 <Logo s={50} />
             </div>
@@ -131,10 +130,7 @@ function Navbar(props: Props) {
                     labelPosition="center"
                 />
                 {data.data.links.map(({ url, title }, index) => (
-                    <UnstyledButton
-                        onClick={() => props.setOpen(false)}
-                        key={index}
-                    >
+                    <UnstyledButton onClick={() => setOpen(false)} key={index}>
                         <Link size="md" href={url} underline>
                             {title}
                         </Link>
@@ -154,10 +150,10 @@ function Navbar(props: Props) {
             <NavButton
                 className={classes.navButton}
                 direction="down"
-                opened={props.open}
+                opened={open}
                 color={`#d9c19a`}
                 thickness={2}
-                onClick={() => props.setOpen(!props.open)}
+                onClick={() => setOpen(!open)}
             />
         </div>
     );

@@ -3,7 +3,7 @@
         "links": [
             {
                 "title": "Shorten a URL",
-                "url": "/"
+                "url": "/shorten"
             },
             {
                 "title": "Ask A Question 💕",
@@ -11,7 +11,7 @@
             },
             {
                 "title": "View Ask Notifications",
-                "url": "/api/ask/notifications"
+                "url": "/ask/notifications"
             }
         ]
     }
