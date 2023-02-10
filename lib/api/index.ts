@@ -12,14 +12,15 @@ export type Response<T extends keyof ApiPathList> = NextApiResponse<
 //Method to handle all api requests
 export default async function request<T extends keyof ApiPathList>(
     path: T,
-    body: ApiPathList[T]['request']
+    body: ApiPathList[T]['request'],
+    method: 'GET' | 'POST' = 'POST'
 ): Promise<ApiPathList[T]['response']> {
     return new Promise(async (resolve, reject) => {
         try {
             const res = await fetch(
                 `https://${process.env.NEXT_PUBLIC_HOSTNAME}/api${path}`,
                 {
-                    method: 'POST',
+                    method,
                     headers: {
                         'Content-Type': 'application/json',
                     },
