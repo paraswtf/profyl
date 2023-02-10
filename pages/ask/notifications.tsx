@@ -7,7 +7,6 @@ import { useEffectOnce } from 'react-use';
 function renderNotifications(
     notifications: undefined | null | { message: string }[]
 ) {
-    console.log(notifications);
     if (notifications === undefined)
         return (
             <Card w="80%" py={10}>
