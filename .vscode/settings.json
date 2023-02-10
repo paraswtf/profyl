@@ -1,3 +1,7 @@
 {
-	"cSpell.words": ["chakra"]
+  "cSpell.words": [
+    "chakra"
+  ],
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

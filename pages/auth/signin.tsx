@@ -15,7 +15,6 @@ import Head from 'next/head';
 import Logo from '../../components/Logo';
 import { getProviders, getSession, signIn } from 'next-auth/react';
 import { object, string } from 'yup';
-import { getServerSession } from 'next-auth';
 const icons = {
     google: <IconBrandGoogle size={20} strokeWidth={4} />,
     discord: <IconBrandDiscord size={20} />,
