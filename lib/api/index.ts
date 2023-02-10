@@ -63,14 +63,6 @@ export function internalError(err: any, res: NextApiResponse) {
 //All api routes return a status property which is a number
 
 export interface ApiPathList {
-    '/sessions/verify': {
-        request: ApiSessionsVerifyRequest;
-        response:
-            | ApiSessionsVerifyResponse
-            | ApiSessionsVerifyErrorResponse
-            | MethodNotAllowedError
-            | InternalServerError;
-    };
     '/urls/generate': {
         request: ApiUrlsGenerateRequest;
         response:
@@ -92,46 +84,6 @@ export interface ApiPathList {
         response:
             | ApiUrlsValidateResponse
             | ApiUrlsValidateErrorResponse
-            | MethodNotAllowedError
-            | InternalServerError;
-    };
-    '/users/details': {
-        request: ApiUsersDetailsRequest;
-        response:
-            | ApiUsersDetailsResponse
-            | ApiUsersDetailsErrorResponse
-            | MethodNotAllowedError
-            | InternalServerError;
-    };
-    '/users/login': {
-        request: ApiUsersLoginRequest;
-        response:
-            | ApiUsersLoginResponse
-            | ApiUsersLoginErrorResponse
-            | MethodNotAllowedError
-            | InternalServerError;
-    };
-    '/users/logout': {
-        request: ApiUsersLogoutRequest;
-        response:
-            | ApiUsersLogoutResponse
-            | ApiUsersLogoutErrorResponse
-            | MethodNotAllowedError
-            | InternalServerError;
-    };
-    '/users/register': {
-        request: ApiUsersRegisterRequest;
-        response:
-            | ApiUsersRegisterResponse
-            | ApiUsersRegisterErrorResponse
-            | MethodNotAllowedError
-            | InternalServerError;
-    };
-    '/users/validate': {
-        request: ApiUsersValidateRequest;
-        response:
-            | ApiUsersValidateResponse
-            | ApiUsersValidateErrorResponse
             | MethodNotAllowedError
             | InternalServerError;
     };
@@ -179,23 +131,6 @@ export type InternalServerError = ErrorResponse & {
     status: 500;
     name: 'INTERNAL_SERVER_ERROR';
 };
-
-// /api/sessions/verify
-export type ApiSessionsVerifyRequest =
-    | {
-          code: string;
-          verificationToken?: undefined;
-      }
-    | {
-          code?: undefined;
-          verificationToken: string;
-      };
-export interface ApiSessionsVerifyResponse extends SuccessResponse {
-    userID: string;
-}
-export type ApiSessionsVerifyErrorResponse =
-    ValidationError<ApiSessionsVerifyRequest>;
-
 // /api/urls/generate
 export interface ApiUrlsGenerateRequest {
     url: string;
@@ -234,64 +169,6 @@ export interface ApiUrlsValidateResponse extends SuccessResponse {
 }
 export type ApiUrlsValidateErrorResponse =
     ValidationError<ApiUrlsValidateRequest>;
-
-// /api/users/details
-export interface ApiUsersDetailsRequest {}
-export interface ApiUsersDetailsResponse extends SuccessResponse {
-    username: string;
-}
-export type ApiUsersDetailsErrorResponse = ErrorResponse & {
-    status: 401;
-    name: 'UNAUTHORIZED';
-};
-
-// /api/users/login
-export type ApiUsersLoginRequest = (
-    | { username: string; email: undefined }
-    | { username: undefined; email: string }
-) & {
-    password: string;
-};
-export interface ApiUsersLoginResponse extends SuccessResponse {}
-export type ApiUsersLoginErrorResponse = ErrorResponse &
-    (
-        | ValidationError<ApiUsersLoginRequest>
-        | {
-              status: 401;
-              name: 'VERIFICATION_REQUIRED';
-              //Sends back an obfuscated email to be displayed to the user
-              email: string;
-          }
-    );
-
-// /api/users/logout
-export interface ApiUsersLogoutRequest {}
-export interface ApiUsersLogoutResponse extends SuccessResponse {}
-export type ApiUsersLogoutErrorResponse = InternalServerError;
-
-// /api/users/register
-export interface ApiUsersRegisterRequest {
-    username: string;
-    email: string;
-    password: string;
-    emailSubscription: boolean;
-    mfaEnabled: boolean;
-}
-export interface ApiUsersRegisterResponse extends SuccessResponse {
-    //Sends back an obfuscated email to be displayed to the user
-    email: string;
-}
-export type ApiUsersRegisterErrorResponse =
-    ValidationError<ApiUsersRegisterRequest>;
-
-// /api/users/validate
-export interface ApiUsersValidateRequest {
-    username: string;
-    email: string;
-}
-export interface ApiUsersValidateResponse extends SuccessResponse {}
-export type ApiUsersValidateErrorResponse =
-    ValidationError<ApiUsersValidateRequest>;
 
 // /api/ask/notifications
 export type ApiAskNotificationsRequest =
