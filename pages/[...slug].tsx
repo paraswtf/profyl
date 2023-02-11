@@ -66,11 +66,9 @@ export default function Redirect({ slug }: { slug: string }) {
                         <Chip variant="filled" checked={false}>
                             <Center>
                                 <IconLock size={'15px'} /> <Space w={5} />
-                                {`https://${
-                                    process.env.NEXT_PUBLIC_HOSTNAME +
+                                {process.env.NEXT_PUBLIC_VERCEL_URL +
                                     '/' +
-                                    slug
-                                }`}
+                                    slug}
                             </Center>
                         </Chip>
                     </Center>
