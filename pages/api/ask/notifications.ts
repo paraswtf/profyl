@@ -16,6 +16,10 @@ const patchschema = object({
     message: string().required(),
 });
 
+const deleteschema = object({
+    updateKey: string().required(),
+});
+
 export default async function generate(
     req: Request<'/ask/notifications'>,
     res: Response<'/ask/notifications'>
@@ -148,6 +152,42 @@ export default async function generate(
                         },
                         data: {
                             message: data.message,
+                        },
+                    })
+                    .then((d) => {
+                        if (!d)
+                            return res.status(400).json({
+                                success: false,
+                                status: 400,
+                                name: 'INVALID_DATA',
+                                message: 'The updateKey is invalid.',
+                                fields: {
+                                    updateKey: data.updateKey,
+                                },
+                            });
+                        res.status(200).json({ status: 200, success: true });
+                    });
+            case 'DELETE':
+                //Handle validation
+                const dd = validate(
+                    req.body as {
+                        updateKey: string;
+                    },
+                    deleteschema
+                );
+                if (dd.error)
+                    return res.status(400).json({
+                        success: false,
+                        status: 400,
+                        name: 'INVALID_DATA',
+                        message: 'Invalid json in request.',
+                        fields: dd,
+                    });
+
+                return prisma.notification
+                    .delete({
+                        where: {
+                            key: dd.updateKey,
                         },
                     })
                     .then((d) => {
