@@ -18,6 +18,7 @@
 
 # production
 /build
+deploymentVars.ts
 
 # misc
 .DS_Store
