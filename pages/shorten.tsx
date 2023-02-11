@@ -21,6 +21,7 @@ import Clipboard from 'react-clipboard.js';
 import Head from 'next/head';
 import Logo from '../components/Logo';
 import request, { ApiUrlsGenerateResponse } from '../lib/api';
+import { NEXT_PUBLIC_VERCEL_URL } from '../deploymentVars';
 
 const getSlugError = async (slug: string) => {
     try {
@@ -187,9 +188,10 @@ const Home: NextPage = () => {
                             {url ? (
                                 <CopyButton
                                     value={
+                                        NEXT_PUBLIC_VERCEL_URL ??
                                         process.env.NEXT_PUBLIC_VERCEL_URL +
-                                        '/' +
-                                        url.slug
+                                            '/' +
+                                            url.slug
                                     }
                                     radius="xl"
                                     w="100%"
@@ -218,9 +220,10 @@ const Home: NextPage = () => {
                             <Center>
                                 <Clipboard
                                     data-clipboard-text={
+                                        NEXT_PUBLIC_VERCEL_URL ??
                                         process.env.NEXT_PUBLIC_VERCEL_URL +
-                                        '/' +
-                                        url.slug
+                                            '/' +
+                                            url.slug
                                     }
                                     button-title="Click to copy"
                                     style={{
