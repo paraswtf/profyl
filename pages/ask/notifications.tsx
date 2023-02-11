@@ -63,9 +63,7 @@ function Notifications(props: Props) {
     >();
     useEffectOnce(() => {
         getNotifications().then((res) =>
-            res.notifications
-                ? setNotifications(res.notifications)
-                : setNotifications(null)
+            setNotifications(res.notifications ?? null)
         );
     });
 
