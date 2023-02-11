@@ -187,7 +187,7 @@ const Home: NextPage = () => {
                             {url ? (
                                 <CopyButton
                                     value={
-                                        process.env.NEXT_PUBLIC_HOSTNAME +
+                                        process.env.NEXT_PUBLIC_VERCEL_URL +
                                         '/' +
                                         url.slug
                                     }
@@ -218,7 +218,7 @@ const Home: NextPage = () => {
                             <Center>
                                 <Clipboard
                                     data-clipboard-text={
-                                        process.env.NEXT_PUBLIC_HOSTNAME +
+                                        process.env.NEXT_PUBLIC_VERCEL_URL +
                                         '/' +
                                         url.slug
                                     }
@@ -238,7 +238,7 @@ const Home: NextPage = () => {
                                                 <IconLink size={'15px'} />{' '}
                                                 <Space w={5} />
                                                 {process.env
-                                                    .NEXT_PUBLIC_HOSTNAME +
+                                                    .NEXT_PUBLIC_VERCEL_URL +
                                                     '/' +
                                                     url.slug}
                                             </Center>
