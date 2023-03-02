@@ -16,7 +16,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                     colorScheme: 'dark',
                 }}
             >
-                <Navbar />
                 <Component {...pageProps} />
             </MantineProvider>
         </SessionProvider>
