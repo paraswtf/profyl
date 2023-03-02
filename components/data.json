@@ -4,14 +4,6 @@
             {
                 "title": "Shorten a URL",
                 "url": "/shorten"
-            },
-            {
-                "title": "Ask A Question 💕",
-                "url": "/ask"
-            },
-            {
-                "title": "View Ask Notifications",
-                "url": "/ask/notifications"
             }
         ]
     }
