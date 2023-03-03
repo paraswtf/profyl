@@ -19,11 +19,16 @@ const noto = Noto_Sans({
 });
 
 async function getSession(cookie: string): Promise<Session> {
-    const response = await fetch(`http://localhost:3000/api/auth/session`, {
-        headers: {
-            cookie,
-        },
-    });
+    const response = await fetch(
+        `http${
+            process.env.NEXT_PUBLIC_VERCEL_ENV === 'development' ? '' : 's'
+        }://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/auth/session`,
+        {
+            headers: {
+                cookie,
+            },
+        }
+    );
 
     const session = await response.json();
 
