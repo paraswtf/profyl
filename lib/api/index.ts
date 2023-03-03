@@ -1,8 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import {
-    NEXT_PUBLIC_VERCEL_ENV,
-    NEXT_PUBLIC_VERCEL_URL,
-} from '../../deploymentVars';
 
 // Types to handle server side request handling
 export type Request<T extends keyof ApiPathList> = Omit<
@@ -25,13 +21,10 @@ export default async function request<T extends keyof ApiPathList>(
         try {
             const res = await fetch(
                 `http${
-                    (NEXT_PUBLIC_VERCEL_ENV ??
-                        process.env.NEXT_PUBLIC_VERCEL_ENV) === 'development'
+                    process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
                         ? ''
                         : 's'
-                }://${
-                    NEXT_PUBLIC_VERCEL_URL ?? process.env.NEXT_PUBLIC_VERCEL_URL
-                }/api${path}`,
+                }://${process.env.NEXT_PUBLIC_VERCEL_URL}/api${path}`,
                 {
                     method,
                     headers: {

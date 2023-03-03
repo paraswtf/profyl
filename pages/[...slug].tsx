@@ -13,7 +13,6 @@ import Head from 'next/head';
 import { useState } from 'react';
 import Logo from '../components/Logo';
 import request from '../lib/api';
-import { NEXT_PUBLIC_VERCEL_URL } from '../deploymentVars';
 
 export default function Redirect({ slug }: { slug: string }) {
     const [submitting, setSubmitting] = useState(false);
@@ -67,10 +66,9 @@ export default function Redirect({ slug }: { slug: string }) {
                         <Chip variant="filled" checked={false}>
                             <Center>
                                 <IconLock size={'15px'} /> <Space w={5} />
-                                {NEXT_PUBLIC_VERCEL_URL ??
-                                    process.env.NEXT_PUBLIC_VERCEL_URL +
-                                        '/' +
-                                        slug}
+                                {process.env.NEXT_PUBLIC_VERCEL_URL +
+                                    '/' +
+                                    slug}
                             </Center>
                         </Chip>
                     </Center>
