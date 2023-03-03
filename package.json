@@ -42,6 +42,7 @@
         "react": "18.2.0",
         "react-clipboard.js": "^2.0.16",
         "react-dom": "18.2.0",
+        "react-moving-text": "^0.0.7",
         "react-native-device-info": "^10.3.0",
         "react-svg-buttons": "^0.4.0",
         "react-use": "^17.4.0",
