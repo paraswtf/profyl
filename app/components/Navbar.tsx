@@ -7,6 +7,7 @@ import Logo from './Logo';
 import { NavButton } from 'react-svg-buttons';
 import NavLink from './NavLink';
 import UserIcon from './UserIcon';
+import { IconNavigation } from '@tabler/icons';
 
 const links = [
     {

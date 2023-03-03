@@ -6,6 +6,7 @@ import {
     Menu,
     Text,
     LoadingOverlay,
+    Loader,
 } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useMantineTheme } from '@mantine/core';
@@ -25,6 +26,8 @@ function UserIcon({}: Props) {
     const session = useSession();
     const theme = useMantineTheme();
     const { width } = useViewportSize();
+    const isMobile = (width: number) =>
+        !!(theme.breakpoints.md && width && width < theme.breakpoints.md);
 
     switch (session.status) {
         case 'loading':
@@ -32,10 +35,21 @@ function UserIcon({}: Props) {
             return (
                 <Menu
                     shadow="md"
-                    width={200}
+                    width="auto"
                     withArrow
                     //@ts-ignore for menu manual control
                     trigger="click" //none later
+                    position="bottom"
+                    styles={{
+                        dropdown: {
+                            background:
+                                'linear-gradient(265.98deg, #121D28 46.72%, #111D27 100%)',
+                        },
+                        arrow: {
+                            background:
+                                'linear-gradient(265.98deg, #121D28 46.72%, #111D27 100%)',
+                        },
+                    }}
                 >
                     <Menu.Target>
                         <ActionIcon
@@ -46,19 +60,26 @@ function UserIcon({}: Props) {
                         >
                             <LoadingOverlay
                                 visible={session.status === 'loading'}
-                                radius={
-                                    theme.breakpoints.md &&
-                                    width &&
-                                    width < theme.breakpoints.md
-                                        ? 1000
-                                        : 10
-                                }
+                                radius={isMobile(width) ? 10 : 1000}
+                                loader={<Loader variant="dots" />}
                             />
-                            <MenuTarget session={session} />
+                            <MenuTarget
+                                session={session}
+                                isMobile={isMobile(width)}
+                            />
                         </ActionIcon>
                     </Menu.Target>
 
                     <Menu.Dropdown>
+                        {!isMobile(width) ? (
+                            <Menu.Label>
+                                <MenuTarget
+                                    session={session}
+                                    isMobile={true}
+                                    small
+                                />
+                            </Menu.Label>
+                        ) : null}
                         <Menu.Label>Account</Menu.Label>
                         <Menu.Item icon={<IconArrowsLeftRight size={14} />}>
                             Link other accounts
@@ -87,12 +108,12 @@ function UserIcon({}: Props) {
 
 interface MenuTargetProps {
     session: any;
+    isMobile: boolean;
+    small?: boolean;
 }
 
-function MenuTarget({ session }: MenuTargetProps) {
-    const theme = useMantineTheme();
-    const { width } = useViewportSize();
-    return theme.breakpoints.md && width && width < theme.breakpoints.md ? (
+function MenuTarget({ session, isMobile, small }: MenuTargetProps) {
+    return isMobile ? (
         <Card
             shadow="sm"
             radius={10}
@@ -105,35 +126,37 @@ function MenuTarget({ session }: MenuTargetProps) {
                 width: '100%',
             }}
         >
-            <Avatar
-                src={session.data.user?.image}
-                radius="xl"
-                itemRef="no-referrer"
-                imageProps={{
-                    referrerPolicy: 'no-referrer',
-                }}
-                style={{
-                    minWidth: '45px',
-                    width: '45px',
-                    minHeight: '45px',
-                    height: '45px',
-                }}
-            >
-                <IconUser />
-            </Avatar>
+            {!small ? (
+                <Avatar
+                    src={session.data?.user?.image}
+                    radius="xl"
+                    itemRef="no-referrer"
+                    imageProps={{
+                        referrerPolicy: 'no-referrer',
+                    }}
+                    style={{
+                        minWidth: '45px',
+                        width: '45px',
+                        minHeight: '45px',
+                        height: '45px',
+                    }}
+                >
+                    <IconUser />
+                </Avatar>
+            ) : null}
             <div>
                 <Text size="sm" weight="700" color="white">
-                    {session.data.user?.name}
+                    {session.data?.user?.name}
                 </Text>
                 <Text size="xs" weight="400">
-                    {session.data.user?.email}
+                    {session.data?.user?.email}
                 </Text>
             </div>
-            <IconChevronRight />
+            {!small ? <IconChevronRight /> : null}
         </Card>
     ) : (
         <Avatar
-            src={session.data.user?.image}
+            src={session.data?.user?.image}
             radius="xl"
             itemRef="no-referrer"
             imageProps={{
