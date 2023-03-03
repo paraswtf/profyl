@@ -120,8 +120,9 @@ function MenuTarget({ session, isMobile, small }: MenuTargetProps) {
             style={{
                 display: 'flex',
                 gap: '15px',
-                background:
-                    'linear-gradient(265.98deg, #112D47 46.72%, #152228 100%)',
+                background: `linear-gradient(265.98deg, #112D47 46.72%, ${
+                    small ? `#1b2733` : `#152228`
+                } 100%)`,
                 alignItems: 'center',
                 width: '100%',
             }}
@@ -139,6 +140,7 @@ function MenuTarget({ session, isMobile, small }: MenuTargetProps) {
                         width: '45px',
                         minHeight: '45px',
                         height: '45px',
+                        border: '2px solid #88A47C',
                     }}
                 >
                     <IconUser />
@@ -163,8 +165,11 @@ function MenuTarget({ session, isMobile, small }: MenuTargetProps) {
                 referrerPolicy: 'no-referrer',
             }}
             style={{
+                minWidth: '45px',
                 width: '45px',
+                minHeight: '45px',
                 height: '45px',
+                border: '2px solid #88A47C',
             }}
         >
             <IconUser />

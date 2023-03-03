@@ -3,9 +3,9 @@ import type { NextPage } from 'next';
 import { Card, Button, Center, Group, Text } from '@mantine/core';
 import { useState } from 'react';
 import Head from 'next/head';
-
-//Method to transpose without changing original array
-const transpose = (a: number[][]) => a[0].map((_, c) => a.map((r) => r[c]));
+import HeroImage from './components/HeroImage';
+//@ts-ignore
+import MovingText from 'react-moving-text';
 
 const Home: NextPage = () => {
     const [grid, setGrid] = useState(
@@ -13,7 +13,16 @@ const Home: NextPage = () => {
     );
 
     return (
-        <div style={{ height: '100vh', width: '100%' }}>
+        <div
+            style={{
+                height: '100vh',
+                width: '100%',
+                backgroundImage:
+                    'radial-gradient(#88A47C41 1px, transparent 1px), radial-gradient(#88A47C41 1px, transparent 1px)',
+                backgroundSize: 'calc(20 * 1px) calc(20 * 1px)',
+                backgroundPosition: '0 0, calc(10 * 1px) calc(10 * 1px)',
+            }}
+        >
             <Head>
                 <title>Profyl - Generate URL</title>
             </Head>
@@ -26,38 +35,50 @@ const Home: NextPage = () => {
                     gap: '15px',
                 }}
             >
-                <Card
-                    w="auto"
-                    h="auto"
+                <HeroImage />
+
+                <Text
+                    c="white"
+                    size="xl"
                     style={{
-                        gap: '15px',
+                        transform: 'translate(-55px, -190px)',
                         display: 'flex',
-                        flexDirection: 'column',
                     }}
                 >
-                    {grid
-                        .map((row, i) =>
-                            row.map((col, j) => (
-                                <Button
-                                    onClickCapture={() => {
-                                        const newArr = [...grid[i]];
-                                        newArr[j] = grid[i][j] ? 0 : 1;
-                                        let newGrid = [...grid];
-                                        newGrid[i] = newArr;
-                                        setGrid(newGrid);
-                                    }}
-                                    key={(i + 1) * (j + 1)}
-                                >
-                                    {grid[i][j]}
-                                </Button>
-                            ))
-                        )
-                        .map((row, index) => (
-                            <Group key={index}>{row}</Group>
-                        ))}
-                </Card>
-                <Text c="white" size="xl">
-                    Coming Soon...
+                    Coming Soon
+                    <MovingText
+                        type="flash"
+                        duration="4000ms"
+                        delay="0s"
+                        direction="alternate-reverse"
+                        timing="ease-in-out"
+                        iteration="infinite"
+                        fillMode="both"
+                    >
+                        .
+                    </MovingText>
+                    <MovingText
+                        type="flash"
+                        duration="4000ms"
+                        delay="0.2s"
+                        direction="alternate-reverse"
+                        timing="ease-in-out"
+                        iteration="infinite"
+                        fillMode="both"
+                    >
+                        .
+                    </MovingText>
+                    <MovingText
+                        type="flash"
+                        duration="4000ms"
+                        delay="0.5s"
+                        direction="alternate-reverse"
+                        timing="ease-in-out"
+                        iteration="infinite"
+                        fillMode="both"
+                    >
+                        .
+                    </MovingText>
                 </Text>
             </Center>
         </div>
