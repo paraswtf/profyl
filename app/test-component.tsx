@@ -52,8 +52,8 @@ const Home: NextPage = () => {
                                 </Button>
                             ))
                         )
-                        .map((row) => (
-                            <Group>{row}</Group>
+                        .map((row, index) => (
+                            <Group key={index}>{row}</Group>
                         ))}
                 </Card>
                 <Text c="white" size="xl">
