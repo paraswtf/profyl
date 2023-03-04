@@ -41,7 +41,7 @@ const Home: NextPage = () => {
                     c="white"
                     size="xl"
                     style={{
-                        transform: 'translate(-55px, -190px)',
+                        transform: 'translate(-55px, -200px)',
                         display: 'flex',
                     }}
                 >
