@@ -1,8 +1,9 @@
 import Navbar from './components/Navbar';
-import RootStyleRegistry from './emotion';
+import RootStyleRegistry from './components/RootStyleRegistry';
 import { Noto_Sans } from 'next/font/google';
 import { headers } from 'next/headers';
 import AuthContext from './components/AuthContext';
+import { ColorScheme } from '@mantine/core';
 
 const noto = Noto_Sans({
     weight: [
@@ -17,17 +18,33 @@ const noto = Noto_Sans({
     subsets: ['latin'],
 });
 
+const parseCookie = (cookie: string) =>
+    cookie
+        .split(';')
+        .map((c) => c.trim())
+        .reduce((acc: { [key: string]: string }, v) => {
+            const split = v.split('=');
+            acc[decodeURIComponent(split[0].trim())] = decodeURIComponent(
+                split[1].trim()
+            );
+            return acc;
+        }, {});
+
 export default async function RootLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const cookie = headers().get('cookie') ?? '';
+    const parsedCookie = parseCookie(cookie);
     return (
         <html lang="en-US">
             <head />
             <body className={noto.className}>
-                <RootStyleRegistry>
-                    <AuthContext cookie={headers().get('cookie') ?? ''}>
+                <RootStyleRegistry
+                    colorScheme={(parsedCookie.theme as ColorScheme) ?? 'dark'}
+                >
+                    <AuthContext cookie={cookie}>
                         <Navbar />
                         {children}
                     </AuthContext>
