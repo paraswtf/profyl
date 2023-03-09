@@ -1,6 +1,13 @@
-import { createStyles, useMantineTheme, Text } from '@mantine/core';
+import {
+    createStyles,
+    useMantineTheme,
+    Text,
+    useMantineColorScheme,
+} from '@mantine/core';
 import { IconClick, IconPointer } from '@tabler/icons';
 import Link from 'next/link';
+import { useState } from 'react';
+import MoonIcon from './MoonIcon';
 import SunIcon from './SunIcon';
 
 interface Props {
@@ -142,7 +149,7 @@ const useStyles = createStyles((theme, _params, getRef) => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'self-end',
+        alignItems: 'center',
         marginBottom: '-10%',
         width: 'max-content',
     },
@@ -154,13 +161,57 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     clicksSubText: {
         fontSize: 12,
     },
+    heroImage: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    sunIcon: {
+        transform: 'translate(264px, -156px) scale(1.1)',
+        transition: 'transform 0.2s ease, opacity 0.2s ease',
+        cursor: 'pointer',
+        width: 'max-content',
+        height: 'max-content',
+        '&:hover': {
+            transform: 'translate(264px, -162px) scale(1.2) rotate(25deg)',
+            stroke: '#88a47c',
+            fill: '#88a47c',
+        },
+        //when the theme is dark
+        '&.light': {
+            transform: 'translate(264px, -162px) scale(1.2) rotate(25deg)',
+            opacity: 0,
+            stroke: '#88a47c',
+            fill: '#88a47c',
+            pointerEvents: 'none',
+        },
+    },
+    moonIcon: {
+        transform: 'translate(266px, -178px) scale(0.8)',
+        transition: 'transform 0.2s ease, opacity 0.2s ease',
+        cursor: 'pointer',
+        width: 'max-content',
+        height: 'max-content',
+        '&:hover': {
+            transform: 'translate(264px, -178px) scale(0.9) rotate(25deg)',
+            stroke: '#88a47c',
+            fill: '#88a47c',
+        },
+        //when the theme is dark
+        '&.dark': {
+            transform: 'translate(264px, -190px) scale(1.2) rotate(345deg)',
+            opacity: 0,
+            stroke: '#88a47c',
+            fill: '#88a47c',
+            pointerEvents: 'none',
+        },
+    },
 }));
 
 export default function HeroImage(props: Props = { height: 100 }) {
-    const theme = useMantineTheme();
     const { classes } = useStyles();
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     return (
-        <div>
+        <div className={classes.heroImage}>
             <div className={classes.clicksBox}>
                 <div className={classes.clicksInnerBox}>
                     <IconClick />
@@ -779,8 +830,20 @@ export default function HeroImage(props: Props = { height: 100 }) {
                     className={classes.cls2}
                     d="M276,20V120"
                     transform="translate(0 -20)"
+                    style={{
+                        strokeDasharray: '100',
+                        strokeDashoffset: '0',
+                    }}
                 />
             </svg>
+            <SunIcon
+                className={classes.sunIcon + ` ` + colorScheme}
+                onClick={() => toggleColorScheme()}
+            />
+            <MoonIcon
+                className={classes.moonIcon + ` ` + colorScheme}
+                onClick={() => toggleColorScheme()}
+            />
         </div>
     );
 }
