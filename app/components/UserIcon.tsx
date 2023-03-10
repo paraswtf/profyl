@@ -150,11 +150,11 @@ function MenuTarget({ session, isMobile, small }: MenuTargetProps) {
                 <Text size="sm" weight="700" color="white">
                     {session.data?.user?.name}
                 </Text>
-                <Text size="xs" weight="400">
+                <Text size="xs" weight="400" color="#C1C2C5">
                     {session.data?.user?.email}
                 </Text>
             </div>
-            {!small ? <IconChevronRight /> : null}
+            {!small ? <IconChevronRight color="#C1C2C5" /> : null}
         </Card>
     ) : (
         <Avatar
