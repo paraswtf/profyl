@@ -164,6 +164,7 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     heroImage: {
         display: 'flex',
         flexDirection: 'column',
+        marginBottom: -48,
     },
     sunIcon: {
         transform: 'translate(264px, -156px) scale(1.1)',
@@ -171,6 +172,7 @@ const useStyles = createStyles((theme, _params, getRef) => ({
         cursor: 'pointer',
         width: 'max-content',
         height: 'max-content',
+        userSelect: 'none',
         '&:hover': {
             transform: 'translate(264px, -162px) scale(1.2) rotate(25deg)',
             stroke: '#88a47c',
@@ -178,7 +180,7 @@ const useStyles = createStyles((theme, _params, getRef) => ({
         },
         //when the theme is dark
         '&.light': {
-            transform: 'translate(264px, -162px) scale(1.2) rotate(25deg)',
+            transform: 'translate(264px, -162px) scale(1.2) rotate(-25deg)',
             opacity: 0,
             stroke: '#88a47c',
             fill: '#88a47c',
@@ -191,14 +193,15 @@ const useStyles = createStyles((theme, _params, getRef) => ({
         cursor: 'pointer',
         width: 'max-content',
         height: 'max-content',
+        userSelect: 'none',
         '&:hover': {
-            transform: 'translate(264px, -178px) scale(0.9) rotate(25deg)',
+            transform: 'translate(264px, -184px) scale(0.9) rotate(25deg)',
             stroke: '#88a47c',
             fill: '#88a47c',
         },
         //when the theme is dark
         '&.dark': {
-            transform: 'translate(264px, -190px) scale(1.2) rotate(345deg)',
+            transform: 'translate(264px, -190px) scale(1.2) rotate(45deg)',
             opacity: 0,
             stroke: '#88a47c',
             fill: '#88a47c',
@@ -833,6 +836,10 @@ export default function HeroImage(props: Props = { height: 100 }) {
                     style={{
                         strokeDasharray: '100',
                         strokeDashoffset: '0',
+                        marginLeft: '80px',
+                        width: '100px',
+                        paddingLeft: '20px',
+                        overflow: 'visible',
                     }}
                 />
             </svg>

@@ -36,50 +36,6 @@ const Home: NextPage = () => {
                 }}
             >
                 <HeroImage />
-
-                <Text
-                    c="white"
-                    size="xl"
-                    style={{
-                        transform: 'translate(-55px, -200px)',
-                        display: 'flex',
-                    }}
-                >
-                    Coming Soon
-                    <MovingText
-                        type="flash"
-                        duration="4000ms"
-                        delay="0s"
-                        direction="alternate-reverse"
-                        timing="ease-in-out"
-                        iteration="infinite"
-                        fillMode="both"
-                    >
-                        .
-                    </MovingText>
-                    <MovingText
-                        type="flash"
-                        duration="4000ms"
-                        delay="0.2s"
-                        direction="alternate-reverse"
-                        timing="ease-in-out"
-                        iteration="infinite"
-                        fillMode="both"
-                    >
-                        .
-                    </MovingText>
-                    <MovingText
-                        type="flash"
-                        duration="4000ms"
-                        delay="0.5s"
-                        direction="alternate-reverse"
-                        timing="ease-in-out"
-                        iteration="infinite"
-                        fillMode="both"
-                    >
-                        .
-                    </MovingText>
-                </Text>
             </Center>
         </div>
     );
