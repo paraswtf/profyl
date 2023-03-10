@@ -98,6 +98,31 @@ const useStyles = createStyles((theme) => ({
             },
         },
     },
+    blur: {
+        position: 'absolute',
+        overflow: 'visible',
+        top: '0',
+        left: '0',
+        width: '100%',
+        height: '100px',
+        display: 'flex',
+        zIndex: 99,
+        [`@media (max-width: ${theme.breakpoints.md}px)`]: {
+            [`&`]: {
+                backdropFilter: 'blur(0px)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                transition:
+                    'backdrop-filter 0.4s ease-in-out, background-color 0.4s ease-in-out 0.4s, height 0s ease-in-out 0.8s',
+            },
+            [`&.active`]: {
+                backdropFilter: 'blur(5px)',
+                backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                height: '100vh',
+                transition:
+                    'backdrop-filter 0.4s ease-in-out, background-color 0.4s ease-in-out, height 0s ease-in-out',
+            },
+        },
+    },
 }));
 
 export default function Navbar() {
@@ -105,30 +130,36 @@ export default function Navbar() {
     const [open, setOpen] = useState(false);
 
     return (
-        <nav className={classes.nav + (open ? ' open' : '')}>
-            <div className={classes.leftSection}>
-                <Link className={classes.logoLink} href="/">
-                    <Logo height={50} color="white" />
-                </Link>
-                <NavButton
-                    className={classes.navButton}
-                    direction="down"
-                    opened={open}
-                    color="white"
-                    thickness={2}
-                    onClick={() => setOpen(!open)}
-                />
-            </div>
-            <div className={classes.rightSection}>
-                <div className={classes.navLinks}>
-                    {links.map(({ href, title }, index) => (
-                        <NavLink href={href} key={index}>
-                            {title}
-                        </NavLink>
-                    ))}
+        <>
+            <div
+                className={classes.blur + (open ? ' active' : '')}
+                onClick={() => setOpen(false)}
+            />
+            <nav className={classes.nav + (open ? ' open' : '')}>
+                <div className={classes.leftSection}>
+                    <Link className={classes.logoLink} href="/">
+                        <Logo height={50} color="white" />
+                    </Link>
+                    <NavButton
+                        className={classes.navButton}
+                        direction="down"
+                        opened={open}
+                        color="white"
+                        thickness={2}
+                        onClick={() => setOpen(!open)}
+                    />
                 </div>
-                <UserIcon />
-            </div>
-        </nav>
+                <div className={classes.rightSection}>
+                    <div className={classes.navLinks}>
+                        {links.map(({ href, title }, index) => (
+                            <NavLink href={href} key={index}>
+                                {title}
+                            </NavLink>
+                        ))}
+                    </div>
+                    <UserIcon />
+                </div>
+            </nav>
+        </>
     );
 }
