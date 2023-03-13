@@ -1,33 +1,43 @@
 import {
     ActionIcon,
-    Avatar,
     Button,
-    Card,
     Menu,
-    Text,
     LoadingOverlay,
     Loader,
+    createStyles,
 } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useMantineTheme } from '@mantine/core';
 
-import {
-    IconArrowsLeftRight,
-    IconChevronRight,
-    IconLogout,
-    IconTrash,
-    IconUser,
-} from '@tabler/icons';
+import { IconArrowsLeftRight, IconLogout, IconTrash } from '@tabler/icons';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import UserDisplay from './UserDisplay';
 
 interface Props {}
 
-function UserIcon({}: Props) {
+const useStyles = createStyles((theme) => ({
+    menuPopover: {
+        borderColor: '#373A40',
+    },
+    optionPrimary: {
+        '&[data-hovered]': {
+            background: `#112D47`,
+        },
+    },
+    optionDanger: {
+        '&[data-hovered]': {
+            background: `rgba(224,49,49,0.2)`,
+        },
+    },
+}));
+
+function UserMenu({}: Props) {
     const session = useSession();
     const theme = useMantineTheme();
     const { width } = useViewportSize();
     const isMobile = (width: number) =>
         !!(theme.breakpoints.md && width && width < theme.breakpoints.md);
+    const { classes } = useStyles();
 
     switch (session.status) {
         case 'loading':
@@ -44,10 +54,17 @@ function UserIcon({}: Props) {
                         dropdown: {
                             background:
                                 'linear-gradient(265.98deg, #121D28 46.72%, #111D27 100%)',
+                            backgroundImage:
+                                'radial-gradient(#88A47C11 0.5px, transparent 0.5px), linear-gradient(265.98deg, #121D28 46.72%, #111D27 100%)',
+                            backgroundSize: 'calc(10 * 0.5px) calc(10 * 0.5px)',
                         },
                         arrow: {
                             background:
                                 'linear-gradient(265.98deg, #121D28 46.72%, #111D27 100%)',
+                            borderColor: '#373A40',
+                        },
+                        divider: {
+                            borderColor: '#373A40',
                         },
                     }}
                 >
@@ -56,24 +73,27 @@ function UserIcon({}: Props) {
                             w="auto"
                             h="auto"
                             maw="100%"
-                            style={{ display: 'inline-block' }}
+                            style={{
+                                display: 'inline-block',
+                                background: 'transparent',
+                            }}
                         >
                             <LoadingOverlay
                                 visible={session.status === 'loading'}
                                 radius={isMobile(width) ? 10 : 1000}
                                 loader={<Loader variant="dots" />}
                             />
-                            <MenuTarget
+                            <UserDisplay
                                 session={session}
                                 isMobile={isMobile(width)}
                             />
                         </ActionIcon>
                     </Menu.Target>
 
-                    <Menu.Dropdown>
+                    <Menu.Dropdown className={classes.menuPopover}>
                         {!isMobile(width) ? (
                             <Menu.Label>
-                                <MenuTarget
+                                <UserDisplay
                                     session={session}
                                     isMobile={true}
                                     small
@@ -81,21 +101,30 @@ function UserIcon({}: Props) {
                             </Menu.Label>
                         ) : null}
                         <Menu.Label>Account</Menu.Label>
-                        <Menu.Item icon={<IconArrowsLeftRight size={14} />}>
+                        <Menu.Item
+                            color={theme.colors.gray[5]}
+                            className={classes.optionPrimary}
+                            icon={<IconArrowsLeftRight size={14} />}
+                        >
                             Link other accounts
                         </Menu.Item>
                         <Menu.Item
                             color="red"
+                            className={classes.optionDanger}
                             icon={<IconLogout size={14} />}
                             onClick={() => signOut()}
                         >
                             Logout
                         </Menu.Item>
 
-                        <Menu.Divider />
+                        <Menu.Divider c="#373A40" />
 
                         <Menu.Label>Danger zone</Menu.Label>
-                        <Menu.Item color="red" icon={<IconTrash size={14} />}>
+                        <Menu.Item
+                            className={classes.optionDanger}
+                            color="red"
+                            icon={<IconTrash size={14} />}
+                        >
                             Delete my account (contact: paras@styxo.codes)
                         </Menu.Item>
                     </Menu.Dropdown>
@@ -106,75 +135,4 @@ function UserIcon({}: Props) {
     }
 }
 
-interface MenuTargetProps {
-    session: any;
-    isMobile: boolean;
-    small?: boolean;
-}
-
-function MenuTarget({ session, isMobile, small }: MenuTargetProps) {
-    return isMobile ? (
-        <Card
-            shadow="sm"
-            radius={10}
-            style={{
-                display: 'flex',
-                gap: '15px',
-                background: `linear-gradient(265.98deg, #112D47 46.72%, ${
-                    small ? `#1b2733` : `#152228`
-                } 100%)`,
-                alignItems: 'center',
-                width: '100%',
-            }}
-        >
-            {!small ? (
-                <Avatar
-                    src={session.data?.user?.image}
-                    radius="xl"
-                    itemRef="no-referrer"
-                    imageProps={{
-                        referrerPolicy: 'no-referrer',
-                    }}
-                    style={{
-                        minWidth: '45px',
-                        width: '45px',
-                        minHeight: '45px',
-                        height: '45px',
-                        border: '2px solid #88A47C',
-                    }}
-                >
-                    <IconUser />
-                </Avatar>
-            ) : null}
-            <div>
-                <Text size="sm" weight="700" color="white">
-                    {session.data?.user?.name}
-                </Text>
-                <Text size="xs" weight="400" color="#C1C2C5">
-                    {session.data?.user?.email}
-                </Text>
-            </div>
-            {!small ? <IconChevronRight color="#C1C2C5" /> : null}
-        </Card>
-    ) : (
-        <Avatar
-            src={session.data?.user?.image}
-            radius="xl"
-            itemRef="no-referrer"
-            imageProps={{
-                referrerPolicy: 'no-referrer',
-            }}
-            style={{
-                minWidth: '45px',
-                width: '45px',
-                minHeight: '45px',
-                height: '45px',
-                border: '2px solid #88A47C',
-            }}
-        >
-            <IconUser />
-        </Avatar>
-    );
-}
-
-export default UserIcon;
+export default UserMenu;

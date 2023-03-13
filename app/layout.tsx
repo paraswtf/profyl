@@ -4,6 +4,7 @@ import { Noto_Sans } from 'next/font/google';
 import { headers } from 'next/headers';
 import AuthContext from './components/AuthContext';
 import { ColorScheme } from '@mantine/core';
+import { Suspense } from 'react';
 
 const noto = Noto_Sans({
     weight: [
@@ -46,7 +47,9 @@ export default async function RootLayout({
                     colorScheme={(parsedCookie.theme as ColorScheme) ?? 'dark'}
                 >
                     <AuthContext cookie={cookie}>
-                        <Navbar />
+                        <Suspense>
+                            <Navbar />
+                        </Suspense>
                         {children}
                     </AuthContext>
                 </RootStyleRegistry>

@@ -3,11 +3,11 @@ import { createStyles } from '@mantine/core';
 import Link from 'next/link';
 import { useState } from 'react';
 import Logo from './Logo';
-//@ts-ignore
-import { NavButton } from 'react-svg-buttons';
+//@ts-expect-error
+import { NavButton } from '../../node_modules/@paraswtf/react-svg-buttons';
 import NavLink from './NavLink';
-import UserIcon from './UserIcon';
-import { IconNavigation } from '@tabler/icons';
+import UserMenu from './UserMenu';
+import { isMobile } from 'react-device-detect';
 
 const links = [
     {
@@ -140,6 +140,10 @@ export default function Navbar() {
                     <Link className={classes.logoLink} href="/">
                         <Logo height={50} color="white" />
                     </Link>
+                    {/* <HamburgerIcon
+                        isOpen={open}
+                        onClick={() => setOpen(!open)}
+                    /> */}
                     <NavButton
                         className={classes.navButton}
                         direction="down"
@@ -147,6 +151,7 @@ export default function Navbar() {
                         color="white"
                         thickness={2}
                         onClick={() => setOpen(!open)}
+                        hoverEffect={!isMobile}
                     />
                 </div>
                 <div className={classes.rightSection}>
@@ -157,7 +162,7 @@ export default function Navbar() {
                             </NavLink>
                         ))}
                     </div>
-                    <UserIcon />
+                    <UserMenu />
                 </div>
             </nav>
         </>
