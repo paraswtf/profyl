@@ -1,14 +1,6 @@
-import {
-    createStyles,
-    useMantineTheme,
-    Text,
-    useMantineColorScheme,
-} from '@mantine/core';
-import { IconClick, IconPointer } from '@tabler/icons';
+import { createStyles, Text, useMantineColorScheme } from '@mantine/core';
+import { IconClick } from '@tabler/icons';
 import Link from 'next/link';
-import { useState } from 'react';
-import MoonIcon from './MoonIcon';
-import SunIcon from './SunIcon';
 import ThemeToggle from './ThemeToggle';
 
 interface Props {
