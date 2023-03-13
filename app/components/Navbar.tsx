@@ -93,7 +93,6 @@ const useStyles = createStyles((theme) => ({
                 transition: 'max-height 0.4s ease-in-out',
             },
             [`&.open`]: {
-                height: 'auto',
                 maxHeight: '360px',
             },
         },
@@ -112,7 +111,7 @@ const useStyles = createStyles((theme) => ({
                 backdropFilter: 'blur(0px)',
                 backgroundColor: 'rgba(0, 0, 0, 0)',
                 transition:
-                    'backdrop-filter 0.4s ease-in-out, background-color 0.4s ease-in-out 0.4s, height 0s ease-in-out 0.8s',
+                    'backdrop-filter 0.4s ease-in-out, background-color 0.4s ease-in-out, height 0s ease-in-out 0.4s',
             },
             [`&.active`]: {
                 backdropFilter: 'blur(5px)',

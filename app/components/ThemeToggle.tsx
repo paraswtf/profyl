@@ -25,11 +25,12 @@ const useStyles = createStyles((theme, _params, getRef) => ({
             },
             [`& .${getRef('moon')}`]: {
                 stroke: theme.colors.dark[4],
-                fill: theme.colors.yellow[2],
+                fill: theme.colors.yellow[1],
                 scale: '1.2',
             },
         },
-        marginLeft: '-30px',
+        marginLeft: '-45px',
+        marginRight: '-20px',
         marginTop: '-10px',
     },
     line: {
@@ -45,6 +46,8 @@ const useStyles = createStyles((theme, _params, getRef) => ({
         ref: getRef('sun'),
         transition: 'all ease-in-out 0.1s',
         padding: '10px',
+        stroke: theme.colors.yellow[2],
+        fill: theme.colors.yellow[1],
         '&.light': {
             transform: 'rotate(0.5turn)',
             opacity: 0,
