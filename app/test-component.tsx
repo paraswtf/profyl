@@ -1,6 +1,6 @@
 'use client';
 import type { NextPage } from 'next';
-import { Card, Button, Center, Group, Text } from '@mantine/core';
+import { Card, Button, Center, Group, Text, Input } from '@mantine/core';
 import { useState } from 'react';
 import Head from 'next/head';
 import HeroImage from './components/HeroImage';
@@ -36,6 +36,24 @@ const Home: NextPage = () => {
                 }}
             >
                 <HeroImage />
+                <Text size={20} variant="text" fw="bold">
+                    Shorten your URLs with ease
+                </Text>
+                <Input
+                    rightSection={<Button>Try it out</Button>}
+                    style={{
+                        border: '2px #4084C5 solid',
+                        borderRadius: '6px',
+                        backgroundColor: '#4084C5',
+                    }}
+                    rightSectionProps={{
+                        style: {
+                            width: 'auto',
+                        },
+                    }}
+                    inputMode="url"
+                    w="288px"
+                />
             </Center>
         </div>
     );

@@ -1,4 +1,4 @@
-import { createStyles, Text, useMantineColorScheme } from '@mantine/core';
+import { createStyles, Text } from '@mantine/core';
 import { IconClick } from '@tabler/icons';
 import Link from 'next/link';
 import ThemeToggle from './ThemeToggle';
@@ -157,55 +157,11 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     heroImage: {
         display: 'flex',
         flexDirection: 'column',
-        marginBottom: -48,
-    },
-    sunIcon: {
-        transform: 'translate(264px, -156px) scale(1.1)',
-        transition: 'transform 0.2s ease, opacity 0.2s ease',
-        cursor: 'pointer',
-        width: 'max-content',
-        height: 'max-content',
-        userSelect: 'none',
-        '&:hover': {
-            transform: 'translate(264px, -162px) scale(1.2) rotate(25deg)',
-            stroke: '#88a47c',
-            fill: '#88a47c',
-        },
-        //when the theme is dark
-        '&.light': {
-            transform: 'translate(264px, -162px) scale(1.2) rotate(-25deg)',
-            opacity: 0,
-            stroke: '#88a47c',
-            fill: '#88a47c',
-            pointerEvents: 'none',
-        },
-    },
-    moonIcon: {
-        transform: 'translate(266px, -178px) scale(0.8)',
-        transition: 'transform 0.2s ease, opacity 0.2s ease',
-        cursor: 'pointer',
-        width: 'max-content',
-        height: 'max-content',
-        userSelect: 'none',
-        '&:hover': {
-            transform: 'translate(264px, -184px) scale(0.9) rotate(25deg)',
-            stroke: '#88a47c',
-            fill: '#88a47c',
-        },
-        //when the theme is dark
-        '&.dark': {
-            transform: 'translate(264px, -190px) scale(1.2) rotate(45deg)',
-            opacity: 0,
-            stroke: '#88a47c',
-            fill: '#88a47c',
-            pointerEvents: 'none',
-        },
     },
 }));
 
 export default function HeroImage(props: Props = { height: 100 }) {
     const { classes } = useStyles();
-    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     return (
         <div className={classes.heroImage}>
             <div className={classes.clicksBox}>
