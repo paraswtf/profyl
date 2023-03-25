@@ -44,7 +44,7 @@ export default async function RootLayout({
             <head />
             <body className={noto.className}>
                 <RootStyleRegistry
-                    colorScheme={(parsedCookie.theme as ColorScheme) ?? 'dark'}
+                    colorScheme={(parsedCookie.theme as ColorScheme) ?? 'light'}
                 >
                     <AuthContext cookie={cookie}>
                         <Suspense>

@@ -1,16 +1,46 @@
 'use client';
 import type { NextPage } from 'next';
-import { Card, Button, Center, Group, Text, Input } from '@mantine/core';
+import {
+    Card,
+    Button,
+    Center,
+    Group,
+    Text,
+    Input,
+    createStyles,
+} from '@mantine/core';
 import { useState } from 'react';
 import Head from 'next/head';
 import HeroImage from './components/HeroImage';
 //@ts-ignore
 import MovingText from 'react-moving-text';
 
+const useStyles = createStyles((theme) => ({
+    root: {
+        '::placeholder': {
+            color: theme.colorScheme === 'dark' ? '#FFFFFF66' : '#16487796',
+            fontWeight: 500,
+        },
+        '::-ms-input-placeholder': {
+            color: theme.colorScheme === 'dark' ? '#FFFFFF66' : '#16487796',
+            fontWeight: 500,
+        },
+        '::-moz-placeholder': {
+            color: theme.colorScheme === 'dark' ? '#FFFFFF66' : '#16487796',
+            fontWeight: 500,
+        },
+        '::-webkit-input-placeholder': {
+            color: theme.colorScheme === 'dark' ? '#FFFFFF66' : '#16487796',
+            fontWeight: 500,
+        },
+    },
+}));
+
 const Home: NextPage = () => {
     const [grid, setGrid] = useState(
         new Array<number[]>(4).fill(new Array<number>(4).fill(0))
     );
+    const { classes } = useStyles();
 
     return (
         <div
@@ -23,9 +53,6 @@ const Home: NextPage = () => {
                 backgroundPosition: '0 0, calc(10 * 1px) calc(10 * 1px)',
             }}
         >
-            <Head>
-                <title>Profyl - Generate URL</title>
-            </Head>
             <Center
                 w="100%"
                 h="100%"
@@ -40,17 +67,39 @@ const Home: NextPage = () => {
                     Shorten your URLs with ease
                 </Text>
                 <Input
-                    rightSection={<Button>Try it out</Button>}
+                    classNames={{ input: classes.root }}
+                    rightSection={
+                        <Button
+                            style={{
+                                borderRadius: '0px 4px 4px 0px',
+                                //borderLeft: '2px solid #4084C5',
+                                backgroundColor: '#263238',
+                            }}
+                        >
+                            Try it out
+                        </Button>
+                    }
                     style={{
                         border: '2px #4084C5 solid',
+                        backgroundColor: 'transparent',
                         borderRadius: '6px',
-                        backgroundColor: '#4084C5',
                     }}
                     rightSectionProps={{
                         style: {
                             width: 'auto',
+                            borderLeft: '2px #4084C5 solid',
+                            borderRadius: '0px 4px 4px 0px',
+                            backgroundColor: '#263238',
                         },
                     }}
+                    styles={{
+                        input: {
+                            background: 'rgba(40,84,125,0.25)',
+                            border: '0px',
+                            backdropFilter: 'blur(1px)',
+                        },
+                    }}
+                    placeholder="Enter a long URL..."
                     inputMode="url"
                     w="288px"
                 />
