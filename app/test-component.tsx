@@ -18,20 +18,20 @@ import MovingText from 'react-moving-text';
 const useStyles = createStyles((theme) => ({
     root: {
         '::placeholder': {
-            color: theme.colorScheme === 'dark' ? '#FFFFFF66' : '#16487796',
-            fontWeight: 500,
+            color: theme.colorScheme === 'dark' ? '#FFFFFF52' : '#16487796',
+            fontWeight: 400,
         },
         '::-ms-input-placeholder': {
-            color: theme.colorScheme === 'dark' ? '#FFFFFF66' : '#16487796',
-            fontWeight: 500,
+            color: theme.colorScheme === 'dark' ? '#FFFFFF52' : '#16487796',
+            fontWeight: 400,
         },
         '::-moz-placeholder': {
-            color: theme.colorScheme === 'dark' ? '#FFFFFF66' : '#16487796',
-            fontWeight: 500,
+            color: theme.colorScheme === 'dark' ? '#FFFFFF52' : '#16487796',
+            fontWeight: 400,
         },
         '::-webkit-input-placeholder': {
-            color: theme.colorScheme === 'dark' ? '#FFFFFF66' : '#16487796',
-            fontWeight: 500,
+            color: theme.colorScheme === 'dark' ? '#FFFFFF52' : '#16487796',
+            fontWeight: 400,
         },
     },
 }));
