@@ -1,22 +1,73 @@
 'use client';
 import type { NextPage } from 'next';
 import {
-    Card,
     Button,
     Center,
-    Group,
     Text,
-    Input,
     createStyles,
+    TextInput,
+    Loader,
+    ButtonProps,
 } from '@mantine/core';
 import { useState } from 'react';
-import Head from 'next/head';
 import HeroImage from './components/HeroImage';
-//@ts-ignore
-import MovingText from 'react-moving-text';
+import { useForm, yupResolver } from '@mantine/form';
+import { object, string } from 'yup';
+import request from '../lib/api';
+import Clipboard from 'react-clipboard.js';
+
+const CopyButton = (props: ButtonProps & { value: string }) => {
+    const [copied, setCopied] = useState(false);
+    return (
+        <Clipboard
+            data-clipboard-text={props.value}
+            onSuccess={() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1000);
+            }}
+            isVisibleWhenUnsupported
+            style={{
+                padding: 0,
+                margin: 0,
+                width: '100%',
+                background: 'none',
+                border: 'none',
+            }}
+        >
+            <Button
+                {...props}
+                color={copied ? 'teal' : 'green'}
+                w="100%"
+                radius={0}
+            >
+                {copied ? 'Copied!' : 'Copy generated URL'}
+            </Button>
+        </Clipboard>
+    );
+};
 
 const useStyles = createStyles((theme) => ({
-    root: {
+    wrapper: {
+        outline: '2px #4084C5 solid',
+        backgroundColor: 'transparent',
+        borderRadius: '4px',
+        '&.error': {
+            outline: '2px #ff3050 solid',
+        },
+        overflow: 'hidden',
+    },
+    input: {
+        transition: 'width ease-in-out 300ms',
+        background: 'rgba(40,84,125,0.25)',
+        '&.error': {
+            background: 'rgba(230,84,125,0.15)',
+        },
+        '&.submitted': {
+            width: 0,
+            padding: 0,
+        },
+        border: '0px',
+        backdropFilter: 'blur(1px)',
         '::placeholder': {
             color: theme.colorScheme === 'dark' ? '#FFFFFF52' : '#16487796',
             fontWeight: 400,
@@ -34,13 +85,73 @@ const useStyles = createStyles((theme) => ({
             fontWeight: 400,
         },
     },
+    rightSection: {
+        width: '100px',
+        transition: 'width ease-in-out 300ms',
+        //Using box shadown, coz border is inside background, and I need it slightly transparent on error
+        boxShadow: '-2px 0 0 #4084C5',
+        //borderLeft: '2px #4084C5 solid',
+        borderRadius: '0px 4px 4px 0px',
+        backgroundColor: '#335B7F',
+        '&.error': {
+            boxShadow: '-2px 0 0 #ff3050',
+            backgroundColor: '#f03030',
+            //borderLeft: '2px #FF000096 solid',
+        },
+        '&.submitted': {
+            width: '100%',
+        },
+    },
+    button: {
+        borderRadius: '0px',
+        backgroundColor: '#335B7F',
+        ':hover': {
+            backgroundColor: '#335B7F',
+        },
+        '&.error': {
+            backgroundColor: '#f03030',
+        },
+    },
 }));
 
+const formSchema = object({
+    url: string().url('invalid URL'),
+});
+
 const Home: NextPage = () => {
-    const [grid, setGrid] = useState(
-        new Array<number[]>(4).fill(new Array<number>(4).fill(0))
-    );
     const { classes } = useStyles();
+    const form = useForm({
+        initialValues: {
+            url: '',
+        },
+        validate: yupResolver(formSchema),
+        validateInputOnChange: true,
+        validateInputOnBlur: true,
+    });
+    const [loading, setLoading] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [url, setUrl] = useState('');
+    async function handleSubmit(values: (typeof form)['values']) {
+        if (!values.url) return form.setFieldError('url', 'url is required');
+        //Else submit to api
+        setSubmitted(true);
+        setLoading(true);
+        try {
+            const res = await request('/urls/generate', {
+                url: values.url,
+            });
+            if (res.status === 200)
+                setUrl(process.env.NEXT_PUBLIC_VERCEL_URL + '/' + res.slug);
+            if (res.status === 400) {
+                form.setFieldError('url', res.fields.url ?? 'an error occured');
+            }
+        } catch (e) {
+            console.error(e);
+            form.setFieldError('url', 'an error occured');
+        }
+        setLoading(false);
+        setSubmitted(false);
+    }
 
     return (
         <div
@@ -66,43 +177,46 @@ const Home: NextPage = () => {
                 <Text size={20} variant="text" fw="bold">
                     Shorten your URLs with ease
                 </Text>
-                <Input
-                    classNames={{ input: classes.root }}
-                    rightSection={
-                        <Button
-                            style={{
-                                borderRadius: '0px 4px 4px 0px',
-                                //borderLeft: '2px solid #4084C5',
-                                backgroundColor: '#263238',
-                            }}
-                        >
-                            Try it out
-                        </Button>
-                    }
-                    style={{
-                        border: '2px #4084C5 solid',
-                        backgroundColor: 'transparent',
-                        borderRadius: '6px',
-                    }}
-                    rightSectionProps={{
-                        style: {
-                            width: 'auto',
-                            borderLeft: '2px #4084C5 solid',
-                            borderRadius: '0px 4px 4px 0px',
-                            backgroundColor: '#263238',
-                        },
-                    }}
-                    styles={{
-                        input: {
-                            background: 'rgba(40,84,125,0.25)',
-                            border: '0px',
-                            backdropFilter: 'blur(1px)',
-                        },
-                    }}
-                    placeholder="Enter a long URL..."
-                    inputMode="url"
-                    w="288px"
-                />
+                <form onSubmit={form.onSubmit(handleSubmit)}>
+                    <TextInput
+                        classNames={{
+                            input:
+                                classes.input +
+                                (form.errors.url ? ' error' : '') +
+                                (submitted || url ? ' submitted' : ''),
+                            wrapper:
+                                classes.wrapper +
+                                (form.errors.url ? ' error' : ''),
+                            rightSection:
+                                classes.rightSection +
+                                (form.errors.url ? ' error' : '') +
+                                (submitted || url ? ' submitted' : ''),
+                        }}
+                        rightSection={
+                            url ? (
+                                <CopyButton value={url} />
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    className={
+                                        classes.button +
+                                        (form.errors.url ? ' error' : '')
+                                    }
+                                >
+                                    {loading ? (
+                                        <Loader variant="dots" color="white" />
+                                    ) : (
+                                        'Try it out'
+                                    )}
+                                </Button>
+                            )
+                        }
+                        placeholder="Enter a long URL..."
+                        inputMode="url"
+                        w="288px"
+                        {...form.getInputProps('url')}
+                    />
+                </form>
             </Center>
         </div>
     );
