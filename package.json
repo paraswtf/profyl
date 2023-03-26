@@ -45,6 +45,7 @@
         "react-clipboard.js": "^2.0.16",
         "react-device-detect": "^2.2.3",
         "react-dom": "18.2.0",
+        "react-dom-confetti": "^0.2.0",
         "react-moving-text": "^0.0.7",
         "react-native-device-info": "^10.3.0",
         "react-use": "^17.4.0",
