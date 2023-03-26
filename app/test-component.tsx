@@ -15,15 +15,22 @@ import { useForm, yupResolver } from '@mantine/form';
 import { object, string } from 'yup';
 import request from '../lib/api';
 import Clipboard from 'react-clipboard.js';
+import Confetti from 'react-dom-confetti';
 
-const CopyButton = (props: ButtonProps & { value: string }) => {
+const CopyButton = (
+    props: ButtonProps & { value: string; setConfetti: (v: boolean) => void }
+) => {
     const [copied, setCopied] = useState(false);
     return (
         <Clipboard
             data-clipboard-text={props.value}
             onSuccess={() => {
                 setCopied(true);
-                setTimeout(() => setCopied(false), 1000);
+                props.setConfetti(true);
+                setTimeout(() => {
+                    setCopied(false);
+                    props.setConfetti(false);
+                }, 1000);
             }}
             isVisibleWhenUnsupported
             style={{
@@ -35,9 +42,11 @@ const CopyButton = (props: ButtonProps & { value: string }) => {
             }}
         >
             <Button
-                {...props}
-                color={copied ? 'teal' : 'green'}
+                component="div"
+                color="teal"
                 w="100%"
+                //This makes the button overflow the input field vertically and not give weird 1px line whenever we click coz it moves down
+                h="50px"
                 radius={0}
             >
                 {copied ? 'Copied!' : 'Copy generated URL'}
@@ -95,14 +104,13 @@ const useStyles = createStyles((theme) => ({
         backgroundColor: '#335B7F',
         '&.error': {
             boxShadow: '-2px 0 0 #ff3050',
-            backgroundColor: '#f03030',
-            //borderLeft: '2px #FF000096 solid',
         },
         '&.submitted': {
             width: '100%',
         },
     },
     button: {
+        width: '100%',
         borderRadius: '0px',
         backgroundColor: '#335B7F',
         ':hover': {
@@ -130,6 +138,7 @@ const Home: NextPage = () => {
     });
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [confetti, setConfetti] = useState(false);
     const [url, setUrl] = useState('');
     async function handleSubmit(values: (typeof form)['values']) {
         if (!values.url) return form.setFieldError('url', 'url is required');
@@ -177,6 +186,10 @@ const Home: NextPage = () => {
                 <Text size={20} variant="text" fw="bold">
                     Shorten your URLs with ease
                 </Text>
+                <Confetti
+                    active={confetti}
+                    config={{ elementCount: 200, spread: 90 }}
+                />
                 <form onSubmit={form.onSubmit(handleSubmit)}>
                     <TextInput
                         classNames={{
@@ -194,7 +207,10 @@ const Home: NextPage = () => {
                         }}
                         rightSection={
                             url ? (
-                                <CopyButton value={url} />
+                                <CopyButton
+                                    value={url}
+                                    setConfetti={setConfetti}
+                                />
                             ) : (
                                 <Button
                                     type="submit"
@@ -202,6 +218,8 @@ const Home: NextPage = () => {
                                         classes.button +
                                         (form.errors.url ? ' error' : '')
                                     }
+                                    //This makes the button overflow the input field vertically and not give weird 1px line whenever we click coz it moves down
+                                    h="50px"
                                 >
                                     {loading ? (
                                         <Loader variant="dots" color="white" />
