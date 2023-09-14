@@ -8,6 +8,8 @@ import {
     TextInput,
     Loader,
     ButtonProps,
+    Card,
+    Space,
 } from '@mantine/core';
 import { useState } from 'react';
 import HeroImage from './components/HeroImage';
@@ -16,6 +18,11 @@ import { object, string } from 'yup';
 import request from '../lib/api';
 import Clipboard from 'react-clipboard.js';
 import Confetti from 'react-dom-confetti';
+import ButtonLight from './components/ButtonLight';
+import ButtonDark from './components/ButtonDark';
+import { signIn } from 'next-auth/react';
+import Transparency from './components/Transparency';
+import Api from './components/Api';
 
 const CopyButton = (
     props: ButtonProps & { value: string; setConfetti: (v: boolean) => void }
@@ -109,9 +116,29 @@ const useStyles = createStyles((theme) => ({
             width: '100%',
         },
     },
-    button: {
+    try_button: {
         width: '100%',
         borderRadius: '0px',
+        backgroundColor: '#335B7F',
+        ':hover': {
+            backgroundColor: '#335B7F',
+        },
+        '&.error': {
+            backgroundColor: '#f03030',
+        },
+    },
+    card: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: 288,
+        padding: 15,
+        gap: 10,
+        backgroundColor: '#1C315E',
+        color: '#FFFFFF',
+    },
+    button: {
+        width: '100%',
+        borderRadius: '3px',
         backgroundColor: '#335B7F',
         ':hover': {
             backgroundColor: '#335B7F',
@@ -165,8 +192,9 @@ const Home: NextPage = () => {
     return (
         <div
             style={{
-                height: '100vh',
                 width: '100%',
+                paddingTop: '180px',
+                paddingBottom: '100px',
                 backgroundImage:
                     'radial-gradient(#88A47C41 1px, transparent 1px), radial-gradient(#88A47C41 1px, transparent 1px)',
                 backgroundSize: 'calc(20 * 1px) calc(20 * 1px)',
@@ -215,7 +243,7 @@ const Home: NextPage = () => {
                                 <Button
                                     type="submit"
                                     className={
-                                        classes.button +
+                                        classes.try_button +
                                         (form.errors.url ? ' error' : '')
                                     }
                                     //This makes the button overflow the input field vertically and not give weird 1px line whenever we click coz it moves down
@@ -235,6 +263,54 @@ const Home: NextPage = () => {
                         {...form.getInputProps('url')}
                     />
                 </form>
+                <Card className={classes.card}>
+                    <Text size={20} weight={700}>
+                        Want to get more out of Profyl?
+                    </Text>
+                    <Text size={15} weight={500}>
+                        Sign up to get access to the beta features like,
+                        customisable URLs, link-in-bio, and more...
+                    </Text>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: 10,
+                        }}
+                    >
+                        <ButtonDark onClick={signIn}>Sign up</ButtonDark>
+                        <ButtonLight onClick={signIn}>Log in</ButtonLight>
+                    </div>
+                </Card>
+                <Space h="xl" />
+                <Text size={20} variant="text" fw="bold">
+                    Why Profyl?{' '}
+                </Text>
+                <Transparency className="transparency-svg" />
+                <Text size={15} variant="text" fw="bold">
+                    Complete transparency
+                </Text>
+                <Text size={15} variant="text" w="281px">
+                    Since profyl is open source, you always know how your data
+                    is being processed.
+                </Text>
+                <Space h="sm" />
+                <Api className="api" />
+                <Text size={15} variant="text" fw="bold">
+                    A simple and robust API
+                </Text>
+                <Text size={15} variant="text" w="281px">
+                    All you need is your API key to generate shortened URLs
+                    right from your own app.
+                </Text>
+                <Space h="sm" />
+                <Text size={15} variant="text" fw="bold">
+                    Data at your fingertips
+                </Text>
+                <Text size={15} variant="text" w="281px">
+                    Get access to all your shortened URLs and their analytics
+                    right from your dashboard.
+                </Text>
             </Center>
         </div>
     );

@@ -65,6 +65,7 @@ export default function RootStyleRegistry(props: {
                         fontFamily: 'Noto Sans, sans-serif',
                         fontFamilyMonospace: 'Noto Sans, monospace',
                         headings: { fontFamily: 'Noto Sans, sans-serif' },
+                        colors: {},
                     }}
                 >
                     {props.children}
