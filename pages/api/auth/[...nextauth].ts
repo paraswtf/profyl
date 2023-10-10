@@ -32,8 +32,6 @@ export const authOptions: NextAuthOptions = {
         }),
         // ...add more providers here
         EmailProvider({
-            id: 'email',
-            name: 'Email',
             from: process.env.MAIL_USERNAME,
             secret: process.env.NEXT_SECRET,
             async sendVerificationRequest(params) {
