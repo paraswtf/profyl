@@ -1,10 +1,10 @@
 'use client';
 import { createStyles } from '@mantine/core';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Logo from './Logo';
 //@ts-expect-error
-import { NavButton } from '../../node_modules/@paraswtf/react-svg-buttons';
+import { NavButton } from '@paraswtf/react-svg-buttons';
 import NavLink from './NavLink';
 import UserMenu from './UserMenu';
 import { isMobile } from 'react-device-detect';
@@ -67,7 +67,7 @@ const useStyles = createStyles((theme) => ({
         justifyContent: 'space-between',
     },
     nav: {
-        position: 'absolute',
+        position: 'fixed',
         top: '0',
         left: '0',
         width: '100%',
@@ -90,35 +90,10 @@ const useStyles = createStyles((theme) => ({
                 padding: '25px 30px',
                 flexDirection: 'column',
                 alignItems: 'flex-start',
-                transition: 'max-height 0.4s ease-in-out',
+                transition: 'max-height 0.1s ease-out',
             },
             [`&.open`]: {
                 maxHeight: '360px',
-            },
-        },
-    },
-    blur: {
-        position: 'absolute',
-        overflow: 'visible',
-        top: '0',
-        left: '0',
-        width: '100%',
-        height: '100px',
-        display: 'flex',
-        zIndex: 99,
-        [`@media (max-width: ${theme.breakpoints.md}px)`]: {
-            [`&`]: {
-                backdropFilter: 'blur(0px)',
-                backgroundColor: 'rgba(0, 0, 0, 0)',
-                transition:
-                    'backdrop-filter 0.4s ease-in-out, background-color 0.4s ease-in-out, height 0s ease-in-out 0.4s',
-            },
-            [`&.active`]: {
-                backdropFilter: 'blur(5px)',
-                backgroundColor: 'rgba(0, 0, 0, 0.25)',
-                height: '100vh',
-                transition:
-                    'backdrop-filter 0.4s ease-in-out, background-color 0.4s ease-in-out, height 0s ease-in-out',
             },
         },
     },
@@ -128,12 +103,22 @@ export default function Navbar() {
     const { classes } = useStyles();
     const [open, setOpen] = useState(false);
 
+    useEffect(() => {
+        const page = document.getElementById('page');
+        if (page) {
+            document.body.style.setProperty(
+                'overflow',
+                open ? 'hidden' : 'auto'
+            );
+            document
+                .getElementById('page')
+                ?.style.setProperty('filter', open ? 'blur(4px)' : 'none');
+            page.onclick = () => setOpen(false);
+        }
+    }, [open]);
+
     return (
         <>
-            <div
-                className={classes.blur + (open ? ' active' : '')}
-                onClick={() => setOpen(false)}
-            />
             <nav className={classes.nav + (open ? ' open' : '')}>
                 <div className={classes.leftSection}>
                     <Link className={classes.logoLink} href="/">

@@ -23,6 +23,7 @@ import ButtonDark from './components/ButtonDark';
 import { signIn } from 'next-auth/react';
 import Transparency from './components/Transparency';
 import Api from './components/Api';
+import Data from './components/Data';
 
 const CopyButton = (
     props: ButtonProps & { value: string; setConfetti: (v: boolean) => void }
@@ -124,7 +125,7 @@ const useStyles = createStyles((theme) => ({
             backgroundColor: '#335B7F',
         },
         '&.error': {
-            backgroundColor: '#f03030',
+            backgroundColor: '#EE5757',
         },
     },
     card: {
@@ -304,11 +305,12 @@ const Home: NextPage = () => {
                     right from your own app.
                 </Text>
                 <Space h="sm" />
+                <Data className="data" />
                 <Text size={15} variant="text" fw="bold">
                     Data at your fingertips
                 </Text>
                 <Text size={15} variant="text" w="281px">
-                    Get access to all your shortened URLs and their analytics
+                    Get access to valuable insights like link clicks and refs
                     right from your dashboard.
                 </Text>
             </Center>

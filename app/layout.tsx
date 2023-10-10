@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import AuthContext from './components/AuthContext';
 import { ColorScheme } from '@mantine/core';
 import { Suspense } from 'react';
+import Footer from './components/Footer';
 
 const noto = Noto_Sans({
     weight: [
@@ -50,7 +51,10 @@ export default async function RootLayout({
                         <Suspense>
                             <Navbar />
                         </Suspense>
-                        {children}
+                        <div id="page">
+                            {children}
+                            <Footer />
+                        </div>
                     </AuthContext>
                 </RootStyleRegistry>
             </body>
