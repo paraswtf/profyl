@@ -3,6 +3,7 @@ import { createStyles, Text } from '@mantine/core';
 import Link from 'next/link';
 import Logo from './Logo';
 import GitHubLogo from './GitHubLogo';
+import GitHubStar from './GitHubStar';
 
 const links = [
     {
@@ -46,6 +47,36 @@ const useStyles = createStyles((theme) => ({
             transform: 'scale(1.1)',
         },
     },
+    stars: {
+        backgroundColor: '#4084C5',
+        color: '#fff',
+        paddingBlock: '2px',
+        paddingInline: '10px',
+        position: 'relative',
+        marginTop: '7px',
+        marginRight: '14px',
+        marginBottom: 'auto',
+        float: 'left',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '4px',
+        cursor: 'pointer',
+        '&:after': {
+            content: '" "',
+            position: 'absolute',
+            right: '-6px',
+            top: '7px',
+            borderTop: '6px solid transparent',
+            borderRight: 'none',
+            borderLeft: '6px solid #4084C5',
+            borderBottom: '6px solid transparent',
+        },
+    },
+    ghs: {
+        marginTop: '-2px',
+    },
 }));
 
 export default function Footer() {
@@ -62,7 +93,15 @@ export default function Footer() {
                             An open-source URL shortener
                         </Text>
                     </div>
-                    <GitHubLogo className={classes.gitlogo} height={25} />
+                    <Link href="/github">
+                        <div className={classes.stars}>
+                            <Text color="white" size="sm" weight={800}>
+                                hhkad
+                            </Text>
+                            <GitHubStar className={classes.ghs} height={14} />
+                        </div>
+                        <GitHubLogo className={classes.gitlogo} height={25} />
+                    </Link>
                 </div>
             </div>
         </div>
