@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
     },
-    secret: process.env.NEXT_SECRET,
+    secret: process.env.NEXT_AUTH_SECRET,
     // Configure one or more authentication providers
     providers: [
         GoogleProvider({
@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions = {
         // ...add more providers here
         EmailProvider({
             from: process.env.MAIL_USERNAME,
-            secret: process.env.NEXT_SECRET,
+            secret: process.env.NEXT_AUTH_SECRET,
             async sendVerificationRequest(params) {
                 const { identifier, url, provider, theme } = params;
                 const { host } = new URL(url);

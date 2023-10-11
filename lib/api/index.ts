@@ -21,7 +21,9 @@ export default async function request<T extends keyof ApiPathList>(
         try {
             const res = await fetch(
                 `http${
-                    process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
+                    process.env.NEXT_PUBLIC_VERCEL_ENV.toLowerCase().startsWith(
+                        'dev'
+                    )
                         ? ''
                         : 's'
                 }://${process.env.NEXT_PUBLIC_VERCEL_URL}/api${path}`,

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Logo from './Logo';
 import GitHubLogo from './GitHubLogo';
 import GitHubStar from './GitHubStar';
+import { useEffect, useState } from 'react';
 
 const links = [
     {
@@ -50,7 +51,6 @@ const useStyles = createStyles((theme) => ({
     stars: {
         backgroundColor: '#4084C5',
         color: '#fff',
-        paddingBlock: '2px',
         paddingInline: '10px',
         position: 'relative',
         marginTop: '7px',
@@ -63,6 +63,7 @@ const useStyles = createStyles((theme) => ({
         justifyContent: 'center',
         gap: '4px',
         cursor: 'pointer',
+        height: '25px',
         '&:after': {
             content: '" "',
             position: 'absolute',
@@ -80,6 +81,28 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function Footer() {
+    const [githubInfo, setGitHubInfo] = useState({
+        stars: null,
+        forks: null,
+    });
+
+    useEffect(() => {
+        if (process.env.NODE_ENV !== 'production') {
+            setGitHubInfo({ stars: 'dev' as any, forks: null });
+            return;
+        }
+        fetch('https://api.github.com/repos/paraswtf/profyl')
+            .then((response) => response.json())
+            .then((json) => {
+                const { stargazers_count, forks_count } = json;
+                setGitHubInfo({
+                    stars: stargazers_count,
+                    forks: forks_count,
+                });
+            })
+            .catch((e) => console.error(e));
+    }, []);
+
     const { classes } = useStyles();
     return (
         <div className={classes.footer}>
@@ -96,7 +119,7 @@ export default function Footer() {
                     <Link href="/github">
                         <div className={classes.stars}>
                             <Text color="white" size="sm" weight={800}>
-                                hhkad
+                                {githubInfo.stars}
                             </Text>
                             <GitHubStar className={classes.ghs} height={14} />
                         </div>
