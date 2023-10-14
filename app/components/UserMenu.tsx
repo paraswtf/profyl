@@ -75,7 +75,7 @@ function UserMenu({ isLoggedIn }: Props) {
                 >
                     <Menu.Target>
                         <ActionIcon
-                            w="auto"
+                            w="100%"
                             h="auto"
                             maw="100%"
                             style={{
@@ -83,26 +83,14 @@ function UserMenu({ isLoggedIn }: Props) {
                                 background: 'transparent',
                             }}
                         >
-                            <LoadingOverlay
-                                visible={session.status === 'loading'}
-                                radius={isMobile(width) ? 10 : 1000}
-                                loader={<Loader variant="dots" />}
-                            />
-                            <UserDisplay
-                                session={session}
-                                isMobile={isMobile(width)}
-                            />
+                            <UserDisplay isMobile={isMobile(width)} />
                         </ActionIcon>
                     </Menu.Target>
 
                     <Menu.Dropdown className={classes.menuPopover}>
                         {!isMobile(width) ? (
                             <Menu.Label>
-                                <UserDisplay
-                                    session={session}
-                                    isMobile={true}
-                                    small
-                                />
+                                <UserDisplay isMobile={true} small />
                             </Menu.Label>
                         ) : null}
                         <Menu.Label>Account</Menu.Label>
