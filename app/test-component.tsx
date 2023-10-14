@@ -25,7 +25,6 @@ import { signIn } from 'next-auth/react';
 import Transparency from './components/Transparency';
 import Api from './components/Api';
 import Data from './components/Data';
-import { manipulateColorBrightness } from '../lib/utils';
 
 const CopyButton = (
     props: ButtonProps & { value: string; setConfetti: (v: boolean) => void }
