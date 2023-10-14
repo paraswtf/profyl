@@ -13,7 +13,9 @@ import { IconArrowsLeftRight, IconLogout, IconTrash } from '@tabler/icons';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import UserDisplay from './UserDisplay';
 
-interface Props {}
+interface Props {
+    isLoggedIn?: boolean;
+}
 
 const useStyles = createStyles((theme) => ({
     menuPopover: {
@@ -31,13 +33,16 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-function UserMenu({}: Props) {
+function UserMenu({ isLoggedIn }: Props) {
     const session = useSession();
     const theme = useMantineTheme();
     const { width } = useViewportSize();
     const isMobile = (width: number) =>
         !!(theme.breakpoints.md && width && width < theme.breakpoints.md);
     const { classes } = useStyles();
+
+    //Display login button if not logged in (client side cookie check to avoid loading flash)
+    if (!isLoggedIn) return <Button onClick={() => signIn()}>Login</Button>;
 
     switch (session.status) {
         case 'loading':

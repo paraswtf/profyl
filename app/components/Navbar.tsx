@@ -9,6 +9,11 @@ import NavLink from './NavLink';
 import UserMenu from './UserMenu';
 import { isMobile } from 'react-device-detect';
 
+interface Props {
+    //Value to check if user is logged in (is a client side cookie check to avoid loading flash)
+    isLoggedIn?: boolean;
+}
+
 const links = [
     {
         title: 'Shorten a URL',
@@ -99,7 +104,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export default function Navbar() {
+export default function Navbar(props: { isLoggedIn?: boolean }) {
     const { classes } = useStyles();
     const [open, setOpen] = useState(false);
 
@@ -146,7 +151,8 @@ export default function Navbar() {
                             </NavLink>
                         ))}
                     </div>
-                    <UserMenu />
+                    {/* Pass isLoggedIn to check client side login and avoid loading when logged out */}
+                    <UserMenu isLoggedIn={props.isLoggedIn} />
                 </div>
             </nav>
         </>

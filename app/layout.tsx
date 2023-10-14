@@ -40,6 +40,8 @@ export default async function RootLayout({
 }) {
     const cookie = headers().get('cookie') ?? '';
     const parsedCookie = parseCookie(cookie);
+    const isLoggedIn =
+        !!parsedCookie['__Secure-next-auth.session-token']?.length;
     return (
         <html lang="en-US">
             <head />
@@ -49,7 +51,7 @@ export default async function RootLayout({
                 >
                     <AuthContext cookie={cookie}>
                         <Suspense>
-                            <Navbar />
+                            <Navbar isLoggedIn={isLoggedIn} />
                         </Suspense>
                         <div id="page">
                             {children}

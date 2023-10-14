@@ -13,13 +13,6 @@ body {
     }
 }
 
-@-moz-document url-prefix() {
-    html,
-    body {
-        overflow: hidden !important;
-    }
-}
-
 a {
     color: inherit;
     text-decoration: none;

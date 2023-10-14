@@ -2,8 +2,12 @@ import { Button, createStyles } from '@mantine/core';
 import React from 'react';
 
 interface Props {
+    className?: string;
     children: React.ReactNode;
     onClick?: () => void;
+    type?: 'submit' | 'reset' | 'button';
+    h?: string;
+    w?: string;
 }
 
 function ButtonLight(props: Props) {
@@ -22,7 +26,13 @@ function ButtonLight(props: Props) {
     const { classes } = useStyles();
 
     return (
-        <Button className={classes.button} onClick={props.onClick}>
+        <Button
+            className={[classes.button, props.className].join(' ')}
+            onClick={props.onClick}
+            type={props.type}
+            h={props.h}
+            w={props.w}
+        >
             {props.children}
         </Button>
     );

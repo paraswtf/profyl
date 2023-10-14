@@ -11,6 +11,7 @@ import {
     Card,
     Space,
 } from '@mantine/core';
+import Color from 'color';
 import { useState } from 'react';
 import HeroImage from './components/HeroImage';
 import { useForm, yupResolver } from '@mantine/form';
@@ -24,6 +25,7 @@ import { signIn } from 'next-auth/react';
 import Transparency from './components/Transparency';
 import Api from './components/Api';
 import Data from './components/Data';
+import { manipulateColorBrightness } from '../lib/utils';
 
 const CopyButton = (
     props: ButtonProps & { value: string; setConfetti: (v: boolean) => void }
@@ -74,8 +76,14 @@ const useStyles = createStyles((theme) => ({
         overflow: 'hidden',
     },
     input: {
-        transition: 'width ease-in-out 300ms',
+        transition: 'width ease-in-out 300ms, background ease-in-out 100ms',
         background: 'rgba(40,84,125,0.25)',
+        width: 188,
+        borderRadius: 0,
+        paddingInline: 12,
+        ':active, :focus': {
+            background: 'rgba(40,84,125,0.22)',
+        },
         '&.error': {
             background: 'rgba(230,84,125,0.15)',
         },
@@ -122,7 +130,7 @@ const useStyles = createStyles((theme) => ({
         borderRadius: '0px',
         backgroundColor: '#335B7F',
         ':hover': {
-            backgroundColor: '#335B7F',
+            backgroundColor: Color('#335B7F').lighten(0.05).hex(),
         },
         '&.error': {
             backgroundColor: '#EE5757',
@@ -241,7 +249,7 @@ const Home: NextPage = () => {
                                     setConfetti={setConfetti}
                                 />
                             ) : (
-                                <Button
+                                <ButtonDark
                                     type="submit"
                                     className={
                                         classes.try_button +
@@ -255,7 +263,7 @@ const Home: NextPage = () => {
                                     ) : (
                                         'Try it out'
                                     )}
-                                </Button>
+                                </ButtonDark>
                             )
                         }
                         placeholder="Enter a long URL..."

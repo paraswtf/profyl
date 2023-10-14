@@ -1,10 +1,11 @@
 'use client';
-import { createStyles, Text } from '@mantine/core';
+import { Center, createStyles, Text } from '@mantine/core';
 import Link from 'next/link';
 import Logo from './Logo';
 import GitHubLogo from './GitHubLogo';
 import GitHubStar from './GitHubStar';
 import { useEffect, useState } from 'react';
+import FootLink from './FootLink';
 
 const links = [
     {
@@ -64,6 +65,7 @@ const useStyles = createStyles((theme) => ({
         gap: '4px',
         cursor: 'pointer',
         height: '25px',
+        borderRadius: '2px',
         '&:after': {
             content: '" "',
             position: 'absolute',
@@ -126,6 +128,11 @@ export default function Footer() {
                         <GitHubLogo className={classes.gitlogo} height={25} />
                     </Link>
                 </div>
+                <Center>
+                    <FootLink href="/about" size={10}>
+                        About
+                    </FootLink>
+                </Center>
             </div>
         </div>
     );
