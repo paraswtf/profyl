@@ -8,13 +8,6 @@ interface MenuTargetProps {
 }
 
 const useStyles = createStyles((theme) => ({
-    avatar: {
-        minWidth: '45px',
-        width: '45px',
-        minHeight: '45px',
-        height: '45px',
-        border: '2px solid #88A47C',
-    },
     userInfoCard: {
         display: 'flex',
         gap: '15px',
@@ -51,59 +44,81 @@ export default function UserDisplay({ isMobile, small }: MenuTargetProps) {
         >
             <div className={classes.avatarAndinfo}>
                 {!small ? (
-                    <Avatar
-                        className={classes.avatar}
+                    <UserIcon
                         src={session.data?.user?.image}
-                        radius="xl"
-                        itemRef="no-referrer"
-                        imageProps={{
-                            referrerPolicy: 'no-referrer',
-                        }}
-                    >
-                        <IconUser />
-                    </Avatar>
+                        isLoading={session.status === 'loading'}
+                    />
                 ) : null}
                 <div className={classes.infoContainer}>
-                    <Text size="sm" weight="700" color="white">
-                        {session.status === 'loading' ? (
-                            <LoadingPlaceholder
-                                height={14}
-                                width={128}
-                            ></LoadingPlaceholder>
-                        ) : (
-                            session.data?.user?.name
-                        )}
-                    </Text>
-                    <Text size="xs" weight="400" color="#C1C2C5">
-                        {session.status === 'loading' ? (
-                            <LoadingPlaceholder
-                                height={12}
-                                width={86}
-                            ></LoadingPlaceholder>
-                        ) : (
-                            session.data?.user?.email
-                        )}
-                    </Text>
+                    {session.status === 'loading' ? (
+                        <LoadingPlaceholder
+                            height={14}
+                            width={128}
+                        ></LoadingPlaceholder>
+                    ) : (
+                        <Text size="sm" weight="700" color="white">
+                            {session.data?.user?.name}
+                        </Text>
+                    )}
+
+                    {session.status === 'loading' ? (
+                        <LoadingPlaceholder
+                            height={12}
+                            width={86}
+                        ></LoadingPlaceholder>
+                    ) : (
+                        <Text size="xs" weight="400" color="#C1C2C5">
+                            {session.data?.user?.email}
+                        </Text>
+                    )}
                 </div>
             </div>
             {!small ? <IconChevronRight color="#C1C2C5" /> : null}
         </Card>
     ) : (
-        <Avatar
-            className={classes.avatar}
+        <UserIcon
             src={session.data?.user?.image}
+            isLoading={session.status === 'loading'}
+        />
+    );
+}
+
+function UserIcon(props: { isLoading: boolean; src?: string | null }) {
+    const {
+        classes: { avatar },
+    } = createStyles((theme) => ({
+        avatar: {
+            minWidth: '45px',
+            width: '45px',
+            minHeight: '45px',
+            height: '45px',
+            border: '2px solid #88A47C',
+        },
+    }))();
+    return (
+        <Avatar
+            className={avatar}
+            src={props.src}
             radius="xl"
             itemRef="no-referrer"
             imageProps={{
                 referrerPolicy: 'no-referrer',
             }}
         >
-            <IconUser />
+            {props.isLoading ? (
+                <LoadingPlaceholder height={45} width={45} />
+            ) : (
+                <IconUser />
+            )}
         </Avatar>
     );
 }
 
-function LoadingPlaceholder(props: { height: number; width: number }) {
+function LoadingPlaceholder(props: {
+    height: number;
+    width: number;
+    borderRadius?: number;
+}) {
     const {
         classes: { loadingPlaceholder },
     } = createStyles((theme) => ({
@@ -122,7 +137,7 @@ function LoadingPlaceholder(props: { height: number; width: number }) {
                     backgroundPosition: '468px 0',
                 },
             },
-            borderRadius: '2px',
+            borderRadius: props.borderRadius ?? 2,
         },
     }))();
     return <div className={loadingPlaceholder}></div>;
