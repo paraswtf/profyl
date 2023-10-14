@@ -84,6 +84,7 @@ export default function UserDisplay({ isMobile, small }: MenuTargetProps) {
 }
 
 function UserIcon(props: { isLoading: boolean; src?: string | null }) {
+    const session = useSession();
     const {
         classes: { avatar },
     } = createStyles((theme) => ({
@@ -92,7 +93,12 @@ function UserIcon(props: { isLoading: boolean; src?: string | null }) {
             width: '45px',
             minHeight: '45px',
             height: '45px',
-            border: '2px solid #88A47C',
+            border: `2px solid ${props.isLoading ? 'gray' : '#88A47C'}`,
+            transition: 'all 0.2s ease-in-out',
+            ':hover img': {
+                transform: 'scale(1.05)',
+                filter: 'brightness(0.8)',
+            },
         },
     }))();
     return (
@@ -108,7 +114,28 @@ function UserIcon(props: { isLoading: boolean; src?: string | null }) {
             {props.isLoading ? (
                 <LoadingPlaceholder height={45} width={45} />
             ) : (
-                <IconUser />
+                <div
+                    style={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background:
+                            'linear-gradient(265.98deg, #112D47 46.72%, #152228 100%)',
+                    }}
+                >
+                    <Text
+                        size="xl"
+                        weight="700"
+                        style={{ lineHeight: '45px' }}
+                        color="white"
+                    >
+                        {(
+                            session.data?.user.name?.charAt(0) ??
+                            session.data?.user.email?.charAt(0)
+                        )?.toUpperCase() ?? 'U'}
+                    </Text>
+                </div>
             )}
         </Avatar>
     );
