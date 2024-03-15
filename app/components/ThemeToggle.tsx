@@ -1,7 +1,7 @@
 import { createStyles, useMantineColorScheme } from '@mantine/core';
 import React from 'react';
-import MoonIcon from './MoonIcon';
-import SunIcon from './SunIcon';
+import MoonIcon from './svg/MoonIcon';
+import SunIcon from './svg/SunIcon';
 
 interface Props {}
 

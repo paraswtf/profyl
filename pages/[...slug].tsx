@@ -11,7 +11,7 @@ import {
 import { useForm } from '@mantine/form';
 import Head from 'next/head';
 import { useState } from 'react';
-import Logo from '../components/Logo';
+import Logo from '../app/components/svg/Logo';
 import request from '../lib/api';
 
 export default function Redirect({ slug }: { slug: string }) {

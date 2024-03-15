@@ -19,6 +19,7 @@ interface Props {
 
 const useStyles = createStyles((theme) => ({
     menuPopover: {
+        borderRadius: 8,
         borderColor: '#373A40',
     },
     optionPrimary: {

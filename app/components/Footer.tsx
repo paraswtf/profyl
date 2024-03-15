@@ -1,9 +1,9 @@
 'use client';
 import { Center, createStyles, Text } from '@mantine/core';
 import Link from 'next/link';
-import Logo from './Logo';
-import GitHubLogo from './GitHubLogo';
-import GitHubStar from './GitHubStar';
+import Logo from './svg/Logo';
+import GitHubLogo from './svg/GitHubLogo';
+import GitHubStar from './svg/GitHubStar';
 import { useEffect, useState } from 'react';
 import FootLink from './FootLink';
 

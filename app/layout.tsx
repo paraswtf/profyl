@@ -6,6 +6,7 @@ import AuthContext from './components/AuthContext';
 import { ColorScheme } from '@mantine/core';
 import { Suspense } from 'react';
 import Footer from './components/Footer';
+import { NotificationsProvider } from '@mantine/notifications';
 
 const noto = Noto_Sans({
     weight: [

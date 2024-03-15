@@ -12,7 +12,7 @@ import { useForm, yupResolver } from '@mantine/form';
 import { IconMailFast, IconBrandGoogle, IconBrandDiscord } from '@tabler/icons';
 import { useState } from 'react';
 import Head from 'next/head';
-import Logo from '../../components/Logo';
+import Logo from '../../app/components/svg/Logo';
 import { getProviders, getSession, signIn } from 'next-auth/react';
 import { object, string } from 'yup';
 const icons = {
@@ -56,10 +56,7 @@ function SignIn({ providers }: Props) {
     const handleSubmit = async (values: (typeof form)['values']) => {
         //Set loading state
         setLoading(true);
-        await signIn('email', {
-            email: values.username,
-            callbackUrl: 'http://localhost:3001/ask',
-        });
+        await signIn('email', { email: values.username });
     };
 
     const { classes } = useStyles();

@@ -41,6 +41,7 @@ const useStyles = createStyles((theme, _params, getRef) => ({
         transform: 'translate(0px, 0px)',
     },
     logo: {
+        cursor: 'pointer',
         transition: 'all 0.2s ease-in-out',
         '&>*': {
             transition: 'all 0.2s ease-in-out',

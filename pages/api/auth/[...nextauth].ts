@@ -10,6 +10,7 @@ export const authOptions: NextAuthOptions = {
     pages: {
         signIn: '/auth/signin',
         error: '/auth/signin',
+        verifyRequest: '/auth/verify-request',
     },
     adapter: PrismaAdapter(prisma),
     callbacks: {

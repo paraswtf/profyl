@@ -2,7 +2,7 @@
 import { createStyles } from '@mantine/core';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Logo from './Logo';
+import Logo from './svg/Logo';
 //@ts-expect-error
 import { NavButton } from '@paraswtf/react-svg-buttons';
 import NavLink from './NavLink';

@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 import Color from 'color';
 import { useState } from 'react';
-import HeroImage from './components/HeroImage';
+import HeroImage from './components/InteractiveHeroImage';
 import { useForm, yupResolver } from '@mantine/form';
 import { object, string } from 'yup';
 import request from '../lib/api';
@@ -22,9 +22,12 @@ import Confetti from 'react-dom-confetti';
 import ButtonLight from './components/ButtonLight';
 import ButtonDark from './components/ButtonDark';
 import { signIn } from 'next-auth/react';
-import Transparency from './components/Transparency';
-import Api from './components/Api';
-import Data from './components/Data';
+import Transparency from './components/svg/TransparencyIllustration';
+import Api from './components/svg/ApiIllustration';
+import Data from './components/svg/DataCollectionIllustration';
+import { showNotification } from '@mantine/notifications';
+import { URLRegex } from '../lib/utils/common';
+import { IconChecklist } from '@tabler/icons';
 
 const CopyButton = (
     props: ButtonProps & { value: string; setConfetti: (v: boolean) => void }
@@ -36,6 +39,14 @@ const CopyButton = (
             onSuccess={() => {
                 setCopied(true);
                 props.setConfetti(true);
+                showNotification({
+                    key: 'copied',
+                    title: 'Copied!',
+                    message: 'The URL has been copied to your clipboard',
+                    color: 'teal',
+                    icon: <IconChecklist size={18} />,
+                    autoClose: 2000,
+                });
                 setTimeout(() => {
                     setCopied(false);
                     props.setConfetti(false);
@@ -158,7 +169,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const formSchema = object({
-    url: string().url('invalid URL'),
+    url: string().matches(URLRegex, 'invalid URL'),
 });
 
 const Home: NextPage = () => {
@@ -168,7 +179,7 @@ const Home: NextPage = () => {
             url: '',
         },
         validate: yupResolver(formSchema),
-        validateInputOnChange: true,
+        validateInputOnChange: false,
         validateInputOnBlur: true,
     });
     const [loading, setLoading] = useState(false);
@@ -182,7 +193,10 @@ const Home: NextPage = () => {
         setLoading(true);
         try {
             const res = await request('/urls/generate', {
-                url: values.url,
+                //If the url does not include the protocol, add it
+                url: values.url.includes('://')
+                    ? values.url
+                    : 'http://' + values.url,
             });
             if (res.status === 200)
                 setUrl(process.env.NEXT_PUBLIC_VERCEL_URL + '/' + res.slug);
