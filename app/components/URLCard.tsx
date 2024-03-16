@@ -1,7 +1,32 @@
 import React from 'react';
 import LinkIcon from './svg/LinkIcon';
-import { Text } from '@mantine/core';
+import { Text, createStyles } from '@mantine/core';
 import { truncateString } from '../../lib/utils';
+import { showNotification } from '@mantine/notifications';
+import Clipboard from 'react-clipboard.js';
+import { IconChecklist } from '@tabler/icons';
+
+const useStyles = createStyles((theme) => ({
+    card: {
+        all: 'unset',
+        borderRadius: 2,
+        display: 'flex',
+        flexDirection: 'row',
+        backgroundColor: 'var(--light-navy, #344476)',
+        border: '1px solid var(--light-blue, #4E8FCC)',
+        padding: '8px 10px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        cursor: 'pointer',
+        '&:hover': {
+            scale: '1.01 !important',
+        },
+        transition: 'all 0.1s ease',
+        '&:active': {
+            backgroundColor: 'var(--light-navy-active, #3B4E87)',
+        },
+    },
+}));
 
 export interface StoredURL {
     baseUrl: string;
@@ -16,19 +41,23 @@ interface Props {
 
 function URLCard(props: Props) {
     const { data } = props;
+    const { classes } = useStyles();
 
     return (
-        <div
-            style={{
-                borderRadius: 2,
-                display: 'flex',
-                flexDirection: 'row',
-                backgroundColor: 'var(--light-navy, #344476)',
-                border: '1px solid var(--light-blue, #4E8FCC)',
-                padding: '8px 10px',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+        <Clipboard
+            className={classes.card}
+            data-clipboard-text={data.baseUrl + '/' + data.slug}
+            onSuccess={() => {
+                showNotification({
+                    key: 'copied',
+                    title: 'Copied!',
+                    message: 'The URL has been copied to your clipboard',
+                    color: 'teal',
+                    icon: <IconChecklist size={18} />,
+                    autoClose: 2000,
+                });
             }}
+            isVisibleWhenUnsupported
         >
             <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
                 <LinkIcon height={36} />
@@ -53,7 +82,7 @@ function URLCard(props: Props) {
                 </div>
             </div>
             <Text size={13}>click to copy</Text>
-        </div>
+        </Clipboard>
     );
 }
 
