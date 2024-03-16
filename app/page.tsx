@@ -6,7 +6,10 @@ import { NotificationsProvider } from '@mantine/notifications';
 export default function Page() {
     return (
         <div style={{ overflowX: 'hidden' }}>
-            <NotificationsProvider>
+            <NotificationsProvider
+                position="top-center"
+                style={{ marginTop: 100 }}
+            >
                 <Head>
                     <title key="home">Profyl</title>
                 </Head>

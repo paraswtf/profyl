@@ -148,6 +148,8 @@ export interface ApiUrlsGenerateRequest {
 }
 export interface ApiUrlsGenerateResponse extends SuccessResponse {
     slug: string;
+    longUrl: string;
+    updateKey: string;
 }
 export type ApiUrlsGenerateErrorResponse =
     ValidationError<ApiUrlsGenerateRequest>;

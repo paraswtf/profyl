@@ -1,12 +1,11 @@
 import { object, string } from 'yup';
 import hash from '../../../lib/hash';
 import validate from '../../../lib/requestValidation/validate';
-import { generateSlug } from '../../../lib/uniqueID';
+import { generateSlug, generateKey } from '../../../lib/uniqueID';
 import { checkIfExisting } from './validate';
 import { internalError, notAllowed, Request, Response } from '../../../lib/api';
 import { getSession } from 'next-auth/react';
 import prisma from '../../../lib/prisma/client';
-import { URLRegex } from '../../../lib/utils/common';
 
 const schema = object({
     url: string().url().required(),
@@ -51,6 +50,7 @@ export default async function generate(
                     });
 
                 const slug = d.slug ?? generateSlug();
+                const updateKey = generateKey();
 
                 //Check if already exists
                 if (await checkIfExisting(slug))
@@ -73,12 +73,17 @@ export default async function generate(
                             slug,
                             password: d.password,
                             redirect: d.url,
+                            updateKey,
                         },
                     })
                     .then(() =>
-                        res
-                            .status(200)
-                            .json({ status: 200, success: true, slug })
+                        res.status(200).json({
+                            status: 200,
+                            success: true,
+                            slug,
+                            updateKey,
+                            longUrl: d.url,
+                        })
                     );
             default:
                 return notAllowed(req, res);
