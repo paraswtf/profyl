@@ -32,6 +32,7 @@ export default function UserDisplay({ isMobile, small }: MenuTargetProps) {
     const { classes } = useStyles();
     const session = useSession();
     return isMobile ? (
+        //Show mobile user info card
         <Card
             className={classes.userInfoCard}
             shadow="sm"
@@ -76,6 +77,7 @@ export default function UserDisplay({ isMobile, small }: MenuTargetProps) {
             {!small ? <IconChevronRight color="#C1C2C5" /> : null}
         </Card>
     ) : (
+        //Show desktop user info circle
         <UserIcon
             src={session.data?.user?.image}
             isLoading={session.status === 'loading'}
@@ -83,6 +85,7 @@ export default function UserDisplay({ isMobile, small }: MenuTargetProps) {
     );
 }
 
+//Desktop user icon
 function UserIcon(props: { isLoading: boolean; src?: string | null }) {
     const session = useSession();
     const {
@@ -109,6 +112,11 @@ function UserIcon(props: { isLoading: boolean; src?: string | null }) {
             itemRef="no-referrer"
             imageProps={{
                 referrerPolicy: 'no-referrer',
+            }}
+            styles={{
+                placeholder: {
+                    border: 'unset',
+                },
             }}
         >
             {props.isLoading ? (
