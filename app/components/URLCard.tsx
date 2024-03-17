@@ -1,10 +1,10 @@
 import React from 'react';
 import LinkIcon from './svg/LinkIcon';
-import { Text, createStyles } from '@mantine/core';
+import { Text, Tooltip, createStyles } from '@mantine/core';
 import { truncateString } from '../../lib/utils';
 import { showNotification } from '@mantine/notifications';
 import Clipboard from 'react-clipboard.js';
-import { IconChecklist } from '@tabler/icons';
+import { IconChecklist, IconTrash } from '@tabler/icons';
 
 const useStyles = createStyles((theme) => ({
     card: {
@@ -44,45 +44,80 @@ function URLCard(props: Props) {
     const { classes } = useStyles();
 
     return (
-        <Clipboard
-            className={classes.card}
-            data-clipboard-text={data.baseUrl + '/' + data.slug}
-            onSuccess={() => {
-                showNotification({
-                    key: 'copied',
-                    title: 'Copied!',
-                    message: 'The URL has been copied to your clipboard',
-                    color: 'teal',
-                    icon: <IconChecklist size={18} />,
-                    autoClose: 2000,
-                });
-            }}
-            isVisibleWhenUnsupported
-        >
-            <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
-                <LinkIcon height={36} />
-                <div>
-                    <Text
-                        size={16}
-                        style={{ margin: 0, padding: 0, marginTop: -3 }}
-                    >
-                        {data.slug}
-                    </Text>
-                    <Text
-                        size={13}
+        <div className={classes.card}>
+            <Clipboard
+                style={{ all: 'unset' }}
+                data-clipboard-text={data.baseUrl + '/' + data.slug}
+                onSuccess={() => {
+                    showNotification({
+                        key: 'copied',
+                        title: 'Copied!',
+                        message: 'The URL has been copied to your clipboard',
+                        color: 'teal',
+                        icon: <IconChecklist size={18} />,
+                        autoClose: 2000,
+                    });
+                }}
+                isVisibleWhenUnsupported
+            >
+                <Tooltip label="click to copy short url">
+                    <div
                         style={{
-                            color: 'var(--lightest-blue, #79ADDF)',
-                            margin: 0,
-                            padding: 0,
-                            marginTop: -6,
+                            width: 200,
+                            display: 'flex',
+                            flexDirection: 'column',
                         }}
                     >
-                        {truncateString(data.longUrl, 18)}
-                    </Text>
+                        <Text
+                            size={16}
+                            style={{
+                                margin: 0,
+                                padding: 0,
+                                marginTop: -3,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {data.slug}
+                        </Text>
+                        <Text
+                            size={13}
+                            style={{
+                                color: 'var(--lightest-blue, #79ADDF)',
+                                margin: 0,
+                                padding: 0,
+                                marginTop: -6,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {data.longUrl}
+                        </Text>
+                    </div>
+                </Tooltip>
+            </Clipboard>
+            <Tooltip label="delete" color="#E16464">
+                <div
+                    style={{ display: 'flex' }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        showNotification({
+                            key: 'delete',
+                            title: 'Not implemented yet!',
+                            message: "The URL wasn't deleted",
+                            color: 'red',
+                            icon: <IconTrash size={18} />,
+                            autoClose: 2000,
+                        });
+                        return false;
+                    }}
+                >
+                    <IconTrash height={36} color="#E16464" />
                 </div>
-            </div>
-            <Text size={13}>click to copy</Text>
-        </Clipboard>
+            </Tooltip>
+        </div>
     );
 }
 
