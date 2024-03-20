@@ -61,7 +61,7 @@ model Url {
     slug      String
     updateKey String
     password  String?
-    redirect  String
+    target    String
     clicks    BigInt  @default(0)
 
     user User? @relation(fields: [userId], references: [id], onDelete: Cascade)

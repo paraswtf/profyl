@@ -179,7 +179,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const formSchema = object({
-    url: string().matches(URLRegex, 'invalid URL'),
+    url: string().matches(URLRegex, 'invalid url').required('url is required'),
 });
 
 interface Props {}
@@ -215,9 +215,9 @@ function TrySection(props: Props) {
         setSubmitted(true);
         setLoading(true);
         try {
-            const res = await request('/urls/generate', {
+            const res = await request('POST', '/urls', {
                 //If the url does not include the protocol, add it
-                url: values.url.includes('://')
+                target: values.url.includes('://')
                     ? values.url
                     : 'https://' + values.url,
             });
@@ -230,7 +230,7 @@ function TrySection(props: Props) {
                     {
                         baseUrl: process.env.NEXT_PUBLIC_VERCEL_URL,
                         slug: res.slug,
-                        longUrl: res.longUrl,
+                        longUrl: res.target,
                         updateKey: res.updateKey,
                     },
                     ...urls,
@@ -239,7 +239,13 @@ function TrySection(props: Props) {
                 localStorage.setItem('urls', JSON.stringify(urls));
             }
             if (res.status === 400) {
-                form.setFieldError('url', res.fields.url ?? 'an error occured');
+                form.setFieldError(
+                    'url',
+                    res.fields.target ?? 'an error occured'
+                );
+            }
+            if (res.status === 500) {
+                form.setFieldError('url', 'an error occured');
             }
         } catch (e) {
             console.error(e);
