@@ -1,0 +1,44 @@
+.navbar {
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	height: 100px;
+	background-color: var(--navy);
+	padding: 20px 40px;
+	width: 100%;
+	border-radius: 0 0 14px 14px;
+	transition: height 0.5s ease-in-out;
+}
+
+.navbar.open {
+	height: 400px;
+}
+
+.bg {
+	top: 0;
+	left: 0;
+	position: absolute;
+	display: flex;
+	width: 100vw;
+}
+
+.bg.open {
+	height: 100dvh;
+}
+
+.navbarHead {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.navLinks {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}

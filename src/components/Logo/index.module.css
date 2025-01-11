@@ -1,0 +1,41 @@
+.base {
+	cursor: pointer;
+
+	& > * {
+		transition: transform 0.2s ease-in-out;
+	}
+
+	&:hover {
+		& .r {
+			transform: translateY(1%);
+		}
+		& .o {
+			transform: translateY(-1%);
+		}
+		& .f {
+			transform: translateY(2%);
+		}
+		& .y {
+			transform: translateY(-2%);
+		}
+		& .l {
+			transform: translateY(3%);
+		}
+	}
+}
+
+.r {
+	transition-delay: 0s;
+}
+.o {
+	transition-delay: 0.05s;
+}
+.f {
+	transition-delay: 0.1s;
+}
+.y {
+	transition-delay: 0.15s;
+}
+.l {
+	transition-delay: 0.2s;
+}
